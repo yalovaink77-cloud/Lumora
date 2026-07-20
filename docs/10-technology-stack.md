@@ -1,6 +1,6 @@
 # Technology Stack
 
-Version: 1.0
+Version: 1.1
 
 Status: Approved
 
@@ -34,6 +34,16 @@ Deployment:
 - Single database
 - Mobile-first
 
+Applications are executable composition layers.
+
+Business rules belong inside packages, not inside applications.
+
+Infrastructure must remain replaceable.
+
+Repository structure and dependency direction are defined in:
+
+docs/09-repository-layout.md
+
 ---
 
 # Package Manager
@@ -46,15 +56,62 @@ Reason:
 - Disk efficient
 - Excellent workspace support
 
+Responsibilities:
+
+- Package management
+- Workspace resolution
+- Shared lockfile management
+
+The root package manager version is pinned in the root `package.json`.
+
 ---
 
 # Monorepo
 
-pnpm Workspaces
+## pnpm Workspaces
+
+pnpm Workspaces manages workspace packages and dependency installation.
 
 Repository structure is defined in:
 
 docs/09-repository-layout.md
+
+## Turborepo
+
+Turborepo manages task orchestration and caching.
+
+Root scripts should delegate to Turborepo for:
+
+- build
+- test
+- lint
+- typecheck
+- dev
+
+Turborepo task definitions live in the root `turbo.json`.
+
+## Nx
+
+Nx is not part of the architecture.
+
+Adding another monorepo orchestration layer requires an ADR.
+
+---
+
+# Toolchain Responsibilities
+
+Each tool has a single primary responsibility.
+
+- **pnpm** — package management and workspace resolution
+- **Turborepo** — build, test, lint, and typecheck orchestration
+- **TypeScript** — static type checking and compilation
+- **ESLint** — code quality rules
+- **Prettier** — formatting
+- **Vitest** — unit and integration tests
+
+Shared technical packages such as config, types, and shared provide reusable building blocks.
+
+They must not become dumping grounds for unrelated code.
 
 ---
 
@@ -65,6 +122,40 @@ TypeScript
 Use strict mode.
 
 Avoid `any`.
+
+The root `tsconfig.base.json` defines shared compiler defaults for the repository.
+
+Individual workspaces may extend the base configuration when a documented exception is required.
+
+---
+
+# TypeScript Strategy
+
+The repository currently uses TypeScript 7 at the root for shared repository tooling.
+
+NestJS 11 and its tooling may rely on the TypeScript 5.x compiler API.
+
+The API application must not inherit an unverified compiler strategy blindly.
+
+Before NestJS application code is introduced, `apps/api` must use a documented and verified TypeScript configuration.
+
+If `apps/api` pins TypeScript 5.9 locally, this must be treated as an intentional package-level toolchain exception.
+
+TypeScript 7 and NestJS are not documented here as fully compatible.
+
+They are also not documented here as definitively incompatible.
+
+Compatibility must be verified through:
+
+- build
+- typecheck
+- application startup
+- dependency injection
+- smoke tests
+
+Do not assume a green typecheck alone proves NestJS runtime behavior.
+
+Decorator metadata and dependency injection must be validated by running the application.
 
 ---
 
@@ -80,6 +171,45 @@ Responsibilities:
 - Background jobs
 - Authentication
 - Domain composition
+
+NestJS belongs in `apps/api`.
+
+It composes packages.
+
+It must not become the home of domain business rules.
+
+---
+
+# NestJS Installation Policy
+
+Do not run `nest new` directly inside the existing `apps/api` directory.
+
+NestJS must be added manually to the existing workspace package.
+
+A temporary generated project may be used only as a reference, never copied blindly.
+
+The following must be preserved:
+
+- existing workspace name (`@lumora/api`)
+- root lockfile
+- package manager (`pnpm`)
+- repository structure
+
+Do not create a nested repository, duplicate lockfile, or standalone Nest project inside the monorepo.
+
+---
+
+# Module System Policy
+
+The CommonJS versus ESM decision for `apps/api` must be explicit before NestJS setup.
+
+Do not silently inherit Nest defaults.
+
+Do not retain ESM only because the placeholder package currently declares `"type": "module"`.
+
+The final choice must be documented and verified with the build and runtime toolchain.
+
+Module system decisions for other applications and packages may differ when justified and documented.
 
 ---
 
@@ -110,6 +240,10 @@ Reasons:
 - Mature ecosystem
 - Excellent Prisma support
 
+Database access belongs inside the database package.
+
+Domain code must not depend on concrete infrastructure implementations.
+
 ---
 
 # ORM
@@ -136,6 +270,8 @@ Responsibilities:
 
 Authorization belongs to the domain.
 
+Authentication integration belongs inside the auth package.
+
 ---
 
 # API
@@ -151,6 +287,10 @@ GraphQL is intentionally out of scope.
 Zod
 
 Use shared schemas whenever practical.
+
+Shared validation schemas may live in types or domain packages as appropriate.
+
+They must not be placed in shared as unrelated utilities.
 
 ---
 
@@ -245,11 +385,47 @@ Responsibilities:
 
 Applications depend on packages.
 
-Packages should not depend on applications.
+Packages must not depend on applications.
 
 Business rules belong inside domain packages.
 
 Infrastructure should remain replaceable.
+
+Dependency direction must follow docs/09-repository-layout.md.
+
+## Dependency Placement
+
+Runtime dependencies belong in the workspace that uses them.
+
+Root `devDependencies` are reserved for shared repository tooling.
+
+Internal packages use the `workspace:*` protocol.
+
+The root package must not become an application dependency container.
+
+Applications may depend on packages.
+
+Domain packages may depend on shared domain abstractions.
+
+Infrastructure adapters may depend on domain contracts.
+
+Shared must not depend on domain-specific packages.
+
+---
+
+# API Foundation Verification Gates
+
+The API foundation is not complete until all of the following pass:
+
+1. Install succeeds without unresolved dependency conflicts.
+2. Lint passes.
+3. Typecheck passes.
+4. Build passes.
+5. Nest application starts successfully.
+6. Dependency injection resolves correctly.
+7. A minimal smoke test passes.
+
+These gates must be satisfied before domain feature work begins in `apps/api`.
 
 ---
 
@@ -264,6 +440,7 @@ Examples:
 - GraphQL
 - Microservices
 - Vector Database
+- Nx
 
 These are intentionally deferred.
 

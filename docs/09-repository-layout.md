@@ -1,6 +1,6 @@
 # Repository Layout
 
-Version: 1.0
+Version: 1.1
 
 Status: Approved
 
@@ -29,31 +29,33 @@ It does not define business rules or implementation details.
 ```
 lumora/
 
-├── apps/
-│   ├── api/
-│   ├── mobile/
-│   └── admin/
-│
-├── packages/
-│   ├── ai/
-│   ├── auth/
-│   ├── child/
-│   ├── database/
-│   ├── domain/
-│   ├── family/
-│   ├── media/
-│   ├── notifications/
-│   ├── pregnancy/
-│   ├── shared/
-│   └── timeline/
-│
-├── infrastructure/
-│   ├── docker/
-│   └── scripts/
-│
-├── docs/
-│
-└── README.md
+apps/
+  api/
+  mobile/
+  admin/
+
+packages/
+  ai/
+  auth/
+  child/
+  config/
+  database/
+  domain/
+  family/
+  media/
+  notifications/
+  pregnancy/
+  shared/
+  timeline/
+  types/
+
+infrastructure/
+  docker/
+  scripts/
+
+docs/
+
+README.md
 ```
 
 ---
@@ -61,6 +63,14 @@ lumora/
 # apps
 
 The apps directory contains executable applications.
+
+Applications are composition layers.
+
+They wire together packages, expose user-facing or API entry points, and run as deployable units.
+
+Applications must not own business rules.
+
+Business logic belongs inside packages.
 
 ## api
 
@@ -198,15 +208,43 @@ Safety rules.
 
 ---
 
-## shared
+## config
 
-Reusable utilities.
+Shared technical configuration.
 
-Shared types.
+Environment and runtime configuration helpers.
 
-Configuration.
+Workspace-level configuration conventions.
 
 No business rules.
+
+No domain logic.
+
+---
+
+## types
+
+Shared type definitions.
+
+Cross-package contracts and reusable type shapes.
+
+No business rules.
+
+No domain behavior.
+
+---
+
+## shared
+
+Reusable, infrastructure-neutral utilities.
+
+Shared helpers that multiple packages may use without coupling to a specific domain.
+
+Shared must not become a dumping ground for unrelated code.
+
+Shared must not contain domain-specific business rules.
+
+Configuration and type definitions belong in config and types, not in shared.
 
 ---
 
@@ -223,6 +261,8 @@ Examples:
 
 Infrastructure must never contain business logic.
 
+Infrastructure must remain replaceable.
+
 ---
 
 # Documentation
@@ -231,15 +271,38 @@ The docs directory remains the source of truth.
 
 Repository structure must evolve together with documentation.
 
+When the repository structure changes, this document must be updated in the same change set.
+
+---
+
+# Dependency Direction
+
+The following dependency directions preserve the modular monolith and keep infrastructure replaceable.
+
+## Allowed
+
+- Applications may depend on packages.
+- Infrastructure adapters may depend on domain contracts.
+- Domain packages may depend on shared domain abstractions.
+
+## Disallowed
+
+- Packages must not depend on applications.
+- Domain code must not depend on concrete infrastructure implementations.
+- Shared must not depend on domain-specific packages.
+
 ---
 
 # Repository Rules
 
 - Keep domain boundaries clear.
-- Avoid circular dependencies.
+- No circular dependencies.
 - Prefer extending existing packages.
 - Do not create new packages without documentation.
+- No undocumented packages.
+- Do not place unrelated code in shared.
 - Major structural changes require an ADR.
+- Repository structure and documentation must be updated together.
 
 ---
 
@@ -248,12 +311,14 @@ Repository structure must evolve together with documentation.
 Repository implementation should follow this sequence:
 
 1. Repository foundation
-2. Tooling
-3. Database
-4. Shared packages
+2. Development toolchain
+3. Shared technical packages
+4. Database foundation
 5. Domain packages
-6. Applications
-7. Infrastructure
+6. Backend application composition
+7. Mobile application
+8. Administrative application
+9. Deployment infrastructure
 
 Do not skip steps.
 
