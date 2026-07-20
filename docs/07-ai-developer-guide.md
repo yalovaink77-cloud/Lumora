@@ -10,7 +10,7 @@ Rebuild Lumora from its documented product vision, principles, domain model, MVP
 - Follow documents in numerical order when they conflict with assumptions.
 - Do not infer requirements from lost code or unrelated repository contents.
 - Raise undocumented decisions before acting on them.
-- Review `99-future-decisions.md` before introducing any new domain, architectural layer, or major cross-cutting concern.
+- Review `99-deferred-decisions.md` before introducing any new domain, architectural layer, or major cross-cutting concern.
 
 ## 3. Coding Rules
 
