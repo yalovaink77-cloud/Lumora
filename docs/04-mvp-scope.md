@@ -1,0 +1,46 @@
+# Lumora MVP Scope
+
+## 1. MVP Goal
+
+Deliver a small, usable, private product that allows a mother to organize the essential story of a pregnancy or child within a family context. The MVP validates the recovered product direction without expanding beyond documented domains.
+
+## 2. Included Features
+
+- User access to a private Lumora experience
+- Creation of a family context
+- A pregnancy or child profile
+- A chronological timeline for meaningful entries
+- Essential family roles and access boundaries
+- Clear privacy and medical-safety guidance
+
+## 3. Excluded Features
+
+- AI-generated medical advice, diagnosis, or treatment guidance
+- Advanced health experiences
+- Rich media management
+- Complex family collaboration and role customization
+- Non-essential personalization, automation, analytics, or social capabilities
+- Any capability not established in the recovery documentation
+
+## 4. MVP Success Criteria
+
+- A mother can begin using Lumora without unnecessary complexity.
+- A pregnancy or child can be represented clearly within a family context.
+- Meaningful entries can be recorded and viewed chronologically.
+- Private information is visible only within its intended family boundary.
+- The product communicates its medical and AI limitations clearly.
+- The MVP is coherent, usable, and limited to its documented scope.
+
+## 5. Future Phases (Phase 2, Phase 3)
+
+### Phase 2
+
+- Expand family participation and permission controls.
+- Introduce carefully scoped media and health experiences.
+- Improve continuity between pregnancy and child stages.
+
+### Phase 3
+
+- Evaluate assistant-based experiences under the principle that AI is not a doctor.
+- Expand the family-centered ecosystem only through documented and validated needs.
+- Consider additional capabilities after privacy, safety, and user value are demonstrated.
