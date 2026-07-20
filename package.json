@@ -3,16 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.16.1",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
-    "dev": "echo \"Not implemented\"",
-    "build": "echo \"Not implemented\"",
-    "test": "echo \"Not implemented\"",
-    "lint": "echo \"Not implemented\"",
-    "typecheck": "echo \"Not implemented\""
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
