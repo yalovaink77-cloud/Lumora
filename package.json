@@ -1,17 +1,25 @@
 {
-    "name": "lumora",
-    "version": "0.1.0",
-    "private": true,
-    "packageManager": "pnpm@10.16.1",
-    "workspaces": [
-      "apps/*",
-      "packages/*"
-    ],
-    "scripts": {
-      "dev": "echo \"Not implemented\"",
-      "build": "echo \"Not implemented\"",
-      "test": "echo \"Not implemented\"",
-      "lint": "echo \"Not implemented\"",
-      "typecheck": "echo \"Not implemented\""
-    }
+  "name": "lumora",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.16.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "echo \"Not implemented\"",
+    "build": "echo \"Not implemented\"",
+    "test": "echo \"Not implemented\"",
+    "lint": "echo \"Not implemented\"",
+    "typecheck": "echo \"Not implemented\""
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "eslint": "^10.7.0",
+    "prettier": "^3.9.5",
+    "tsx": "^4.23.1",
+    "turbo": "^2.10.5",
+    "typescript": "^7.0.2"
   }
+}
