@@ -35,6 +35,7 @@ This document defines product-level policies for privacy, safety, and trust. It 
 - AI communicates its limitations and the boundaries of its role.
 - AI defers to qualified healthcare professionals for medical decisions.
 - AI behavior must remain consistent with all privacy and safety principles.
+- AI must never fabricate medical facts or present uncertain information as established medical knowledge.
 
 ## 5. Data Security
 

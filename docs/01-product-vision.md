@@ -1,29 +1,75 @@
 # Lumora Product Vision
 
-## 1. Vision
+## Vision
 
-Rebuild Lumora as a coherent product whose direction is defined by documented decisions.
+Lumora is a lifelong family platform that helps families preserve health records, life milestones, and memories from pregnancy through adulthood.
 
-## 2. Mission
+It combines health organization, child development tracking, and family memory preservation into a single trusted platform.
 
-Recover and document the product vision, architecture, and MVP scope before implementation begins.
+---
 
-## 3. Product Philosophy
+## Mission
 
-Lumora is rebuilt deliberately: documentation precedes implementation, and unverified assumptions are excluded.
+Help families safely organize, understand, and preserve their most valuable life moments while respecting privacy, medical responsibility, and long-term ownership of personal data.
 
-## 4. Target Users
+---
 
-Target users have not yet been recovered or defined. They must be established in a future documented product decision.
+## Product Philosophy
 
-## 5. Long-term Goal
+Lumora is built on three fundamental principles:
 
-Establish a maintainable product foundation that can be rebuilt from its documented vision and architecture.
+- **Mother-first experience** — The product experience is designed primarily for mothers during pregnancy and early childhood.
+- **Child-centered data model** — Children's data exists independently from individual users and can be shared with authorized caregivers.
+- **Family-centered ecosystem** — The family is the core entity that connects pregnancies, children, caregivers, memories, and health records.
 
-## 6. What Lumora Is
+Documentation and architecture decisions always precede implementation.
 
-Lumora is the official restart of a previously lost local project, currently in the Recovery Phase.
+---
 
-## 7. What Lumora Is Not
+## Target Users
 
-Lumora is not a reconstruction based on assumed missing code, undocumented architecture, or invented features.
+Primary users:
+
+- Expecting mothers
+- Parents
+- Families with children
+
+Future users:
+
+- Caregivers
+- Guardians
+- Extended family members
+- Adult children accessing their own history
+
+---
+
+## Long-term Goal
+
+Become the trusted digital home for every family's health history, growth journey, and lifelong memories.
+
+Lumora should evolve into a platform that remains valuable from the first positive pregnancy test through adulthood.
+
+---
+
+## What Lumora Is
+
+Lumora is:
+
+- A family platform
+- A pregnancy companion
+- A child development companion
+- A family health record organizer
+- A digital family memory archive
+- An AI-assisted family knowledge system
+
+---
+
+## What Lumora Is Not
+
+Lumora is not:
+
+- A medical diagnosis application
+- A replacement for healthcare professionals
+- A social network
+- A generic cloud storage service
+- A baby-only application

@@ -10,6 +10,7 @@ Rebuild Lumora from its documented product vision, principles, domain model, MVP
 - Follow documents in numerical order when they conflict with assumptions.
 - Do not infer requirements from lost code or unrelated repository contents.
 - Raise undocumented decisions before acting on them.
+- Review `99-future-decisions.md` before introducing any new domain, architectural layer, or major cross-cutting concern.
 
 ## 3. Coding Rules
 
@@ -18,6 +19,7 @@ Rebuild Lumora from its documented product vision, principles, domain model, MVP
 - Do not add speculative features, abstractions, or dependencies.
 - Preserve privacy, child-data protection, and medical-safety principles.
 - Keep changes small, focused, and reviewable.
+- Prefer simple, readable solutions over premature optimization.
 
 ## 4. Documentation Rules
 
@@ -33,6 +35,7 @@ Rebuild Lumora from its documented product vision, principles, domain model, MVP
 - Treat health and child data as sensitive by default.
 - Keep AI within its assistant role; it must not act as a doctor.
 - Do not expand MVP scope without a documented decision.
+- Prefer extending existing modules over creating new ones unless a documented architectural decision requires a new domain.
 
 ## 6. Prompt Rules
 
@@ -41,6 +44,7 @@ Rebuild Lumora from its documented product vision, principles, domain model, MVP
 - Ask a focused question when a required decision is missing or ambiguous.
 - State any conflict with existing documentation clearly.
 - Do not claim an action was performed unless it was completed and verified.
+- If a requested change matches a deferred decision, stop implementation and recommend promoting the deferred decision into a documented ADR or product decision before continuing.
 
 ## 7. Git Rules
 

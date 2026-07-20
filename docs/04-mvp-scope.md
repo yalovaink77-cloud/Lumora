@@ -6,12 +6,15 @@ Deliver a small, usable, private product that allows a mother to organize the es
 
 ## 2. Included Features
 
-- User access to a private Lumora experience
-- Creation of a family context
-- A pregnancy or child profile
-- A chronological timeline for meaningful entries
-- Essential family roles and access boundaries
-- Clear privacy and medical-safety guidance
+- User registration and authentication
+- Create and manage a family
+- Create a pregnancy profile
+- Create a child profile
+- Record timeline events
+- View timeline chronologically
+- Basic family member roles
+- Privacy-aware access control
+- Medical safety and AI disclaimers
 
 ## 3. Excluded Features
 
