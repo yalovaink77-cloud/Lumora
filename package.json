@@ -1,0 +1,17 @@
+{
+    "name": "lumora",
+    "version": "0.1.0",
+    "private": true,
+    "packageManager": "pnpm@10.16.1",
+    "workspaces": [
+      "apps/*",
+      "packages/*"
+    ],
+    "scripts": {
+      "dev": "echo \"Not implemented\"",
+      "build": "echo \"Not implemented\"",
+      "test": "echo \"Not implemented\"",
+      "lint": "echo \"Not implemented\"",
+      "typecheck": "echo \"Not implemented\""
+    }
+  }
