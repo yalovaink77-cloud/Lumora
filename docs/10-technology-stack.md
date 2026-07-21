@@ -279,6 +279,18 @@ Environment loading:
 
 Better Auth
 
+Status: **Approved** — see `docs/12-authentication-architecture-decision.md`.
+
+Strategy:
+
+- **Session-based authentication** is the default; server-managed sessions, not a custom JWT system.
+- **Better Auth** owns credential hashing and session protocol where applicable.
+- **NestJS** (`apps/api`) owns integration, guards, principal resolution, and authorization boundaries.
+- **Persistence** flows through `@lumora/database` (Prisma schema and migrations in `packages/database`).
+- **Custom JWT authentication systems are not approved** as Lumora's primary auth foundation.
+
+Advanced authentication features — social login, passkeys, MFA, password reset delivery, email verification, roles, and public-launch rate limiting — remain deferred until separately documented.
+
 Responsibilities:
 
 - Authentication
