@@ -1,0 +1,2 @@
+-- Lumora database foundation baseline.
+-- No application models yet.
