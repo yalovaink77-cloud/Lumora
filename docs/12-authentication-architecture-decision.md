@@ -344,6 +344,15 @@ The following remain out of scope until separately documented and approved:
 - **Authentication and authorization remain separate concepts.**
 - Sensitive family and child data must **never become part of auth session payloads**.
 
+## Implementation facts (Sprint 2.3B)
+
+- Better Auth version: `1.6.23`
+- Route prefix: `/api/auth`
+- Protected application endpoint: `GET /auth/me`
+- NestJS integration: local adapter in `apps/api/src/auth`
+- Auth runtime package: `@lumora/auth`
+- Session strategy: server-managed database sessions; no JWT plugin
+
 ---
 
 # 15. Implementation Gate

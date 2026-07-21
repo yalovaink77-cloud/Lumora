@@ -291,6 +291,17 @@ Strategy:
 
 Advanced authentication features — social login, passkeys, MFA, password reset delivery, email verification, roles, and public-launch rate limiting — remain deferred until separately documented.
 
+Implementation (Sprint 2.3B):
+
+- Package: `better-auth@1.6.23`
+- Runtime owner: `@lumora/auth`
+- NestJS integration: local adapter in `apps/api/src/auth` (Better Auth is ESM-only; the API remains CommonJS and loads auth through dynamic imports)
+- Route prefix: `/api/auth`
+- Protected application endpoint: `GET /auth/me`
+- Session strategy: server-managed database sessions through Better Auth; no custom JWT foundation
+- Persistence: Better Auth models in `packages/database/prisma/schema.prisma` accessed only through `@lumora/database`
+- Custom JWT authentication systems are not approved
+
 Responsibilities:
 
 - Authentication
