@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 async function bootstrap(): Promise<void> {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule, {
+    bodyParser: false,
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   });
 
