@@ -258,6 +258,21 @@ Responsibilities:
 - Migrations
 - Type-safe queries
 
+Prisma schema and migrations live in `packages/database/prisma/`.
+
+The `@lumora/database` package is the only database access layer.
+
+Applications must not define duplicate Prisma configuration.
+
+Environment loading:
+
+- `apps/api/.env` is loaded by Nest `ConfigModule` for application startup.
+- Prisma CLI commands run from `packages/database` and read `process.env` from that
+  package context. Provide `DATABASE_URL` either by exporting it in the shell or by
+  creating `packages/database/.env`.
+- Nest `ConfigModule` does not load environment variables for standalone Prisma CLI
+  commands.
+
 ---
 
 # Authentication

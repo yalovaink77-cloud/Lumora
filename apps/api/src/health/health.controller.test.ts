@@ -1,16 +1,35 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { Test } from '@nestjs/testing';
-
+import { DatabaseService } from '../database/database.service';
 import { HealthController } from './health.controller';
 
-test('HealthController returns ok status', async () => {
-  const moduleRef = await Test.createTestingModule({
-    controllers: [HealthController],
-  }).compile();
+test('HealthController returns ok when database is connected', async () => {
+  const databaseService = {
+    isConnected: async () => true,
+  } as Pick<DatabaseService, 'isConnected'>;
 
-  const controller = moduleRef.get(HealthController);
+  const controller = new HealthController(databaseService as DatabaseService);
 
-  assert.deepEqual(controller.check(), { status: 'ok' });
+  assert.deepEqual(await controller.check(), {
+    status: 'ok',
+    checks: {
+      database: 'ok',
+    },
+  });
+});
+
+test('HealthController returns degraded when database is unavailable', async () => {
+  const databaseService = {
+    isConnected: async () => false,
+  } as Pick<DatabaseService, 'isConnected'>;
+
+  const controller = new HealthController(databaseService as DatabaseService);
+
+  assert.deepEqual(await controller.check(), {
+    status: 'degraded',
+    checks: {
+      database: 'error',
+    },
+  });
 });
