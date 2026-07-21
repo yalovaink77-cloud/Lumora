@@ -52,6 +52,12 @@ Every new contributor should read the documentation in the following order.
 7. 08-architecture-decisions.md
 8. 99-deferred-decisions.md
 9. 07-ai-developer-guide.md
+10. 09-repository-layout.md
+11. 10-technology-stack.md
+12. 11-founder-independence-and-long-term-continuity.md
+13. 12-authentication-architecture-decision.md
+14. 13-family-domain-architecture-decision.md
+15. 14-pregnancy-domain-architecture-decision.md
 
 Do not skip this order.
 
