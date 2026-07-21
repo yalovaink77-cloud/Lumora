@@ -353,6 +353,24 @@ The following remain out of scope until separately documented and approved:
 - Auth runtime package: `@lumora/auth`
 - Session strategy: server-managed database sessions; no JWT plugin
 
+## Runtime verification facts (Sprint 2.3C)
+
+- The committed Prisma migrations were applied unchanged to a disposable PostgreSQL
+  16 database.
+- Valid email/password sign-up and sign-in were verified through the compiled API.
+- The session is transported in Better Auth's signed, HTTP-only, SameSite=Lax cookie
+  and persisted in PostgreSQL.
+- Successful Better Auth JSON responses are filtered by `@lumora/auth` so raw token
+  fields are not exposed in response bodies; cookie headers remain the session
+  transport.
+- `GET /auth/me` returns only the neutral `id`, `email`, and `name` principal.
+- Logout deletes the active database session, and reuse of the revoked cookie returns
+  HTTP 401.
+- Credential persistence was verified to contain a Better Auth-produced password
+  hash rather than the submitted password.
+- The repeatable command is `pnpm test:auth:postgres`. It creates and removes an
+  isolated `postgres:16-alpine` container and does not require persistent test data.
+
 ---
 
 # 15. Implementation Gate

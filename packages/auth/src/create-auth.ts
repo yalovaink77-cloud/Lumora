@@ -3,6 +3,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { getPrismaClient } from '@lumora/database';
 
 import type { AuthRuntimeConfig } from './auth-config.js';
+import { sessionResponseRedaction } from './session-response-redaction.js';
 
 export function createAuth(config: AuthRuntimeConfig) {
   return betterAuth({
@@ -17,6 +18,7 @@ export function createAuth(config: AuthRuntimeConfig) {
     emailAndPassword: {
       enabled: true,
     },
+    plugins: [sessionResponseRedaction],
     telemetry: {
       enabled: false,
     },

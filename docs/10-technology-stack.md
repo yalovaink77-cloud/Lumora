@@ -300,6 +300,12 @@ Implementation (Sprint 2.3B):
 - Protected application endpoint: `GET /auth/me`
 - Session strategy: server-managed database sessions through Better Auth; no custom JWT foundation
 - Persistence: Better Auth models in `packages/database/prisma/schema.prisma` accessed only through `@lumora/database`
+- PostgreSQL runtime verification: `pnpm test:auth:postgres` builds the repository,
+  starts an isolated disposable PostgreSQL 16 container, applies the existing
+  migrations, verifies the complete cookie-session lifecycle, and removes the
+  container
+- Response safety: Better Auth session cookies remain the HTTP-only transport while
+  raw token fields are removed from JSON response bodies
 - Custom JWT authentication systems are not approved
 
 Responsibilities:

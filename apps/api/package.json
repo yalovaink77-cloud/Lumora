@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "pnpm run test:unit && pnpm run test:integration",
+    "test:auth:postgres:runtime": "node --import tsx --test src/auth/auth.postgres.integration.ts",
     "test:unit": "node --import tsx --test --test-concurrency=1 $(find src -name '*.test.ts' ! -name '*.integration.test.ts' -print)",
     "test:integration": "node --import tsx --test --test-force-exit src/**/*.integration.test.ts"
   },

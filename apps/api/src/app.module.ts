@@ -5,10 +5,11 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { HttpBodyModule } from './http/http-body.module';
+import { areTestHttpRoutesEnabled } from './test-http/test-http.config';
 import { TestHttpModule } from './test-http/test-http.module';
 
 const optionalTestHttpModule: Type[] =
-  process.env.LUMORA_ENABLE_TEST_HTTP_ROUTES === 'true' ? [TestHttpModule] : [];
+  areTestHttpRoutesEnabled() ? [TestHttpModule] : [];
 
 @Module({
   imports: [
