@@ -203,6 +203,8 @@ Do not create a nested repository, duplicate lockfile, or standalone Nest projec
 
 The CommonJS versus ESM decision for `apps/api` must be explicit before NestJS setup.
 
+**Decision:** `apps/api` uses CommonJS. The workspace package does not declare `"type": "module"`. NestJS builds with `nest build` and runs from compiled `dist/` output.
+
 Do not silently inherit Nest defaults.
 
 Do not retain ESM only because the placeholder package currently declares `"type": "module"`.
