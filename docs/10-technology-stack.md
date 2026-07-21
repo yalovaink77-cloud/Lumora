@@ -345,6 +345,33 @@ The package and persistence boundaries are defined in
 
 ---
 
+# Pregnancy Foundation
+
+Implementation (Sprint 2.5B):
+
+- Domain and application contracts: `@lumora/pregnancy`
+- Module format: CommonJS, matching the API and database composition boundary
+- Validation: strict Zod parsing with trimming and a 100 Unicode-code-point
+  maximum
+- Persistence adapter: `PrismaPregnancyRepository` in `@lumora/database`
+- API composition: `apps/api/src/pregnancy`
+- Endpoints: `POST /families/:familyId/pregnancies`,
+  `GET /families/:familyId/pregnancies`, and
+  `GET /families/:familyId/pregnancies/:pregnancyId`
+- Authorization: neutral authenticated User identifier plus persisted
+  FamilyMembership scope on every persistence operation
+- Creation race safety: membership authorization and Pregnancy persistence run
+  in one serializable Prisma transaction
+- PostgreSQL verification: `pnpm test:pregnancy:postgres` builds the repository,
+  validates and deploys all migrations to disposable PostgreSQL 16, and runs
+  authentication, Family, and Pregnancy runtime verification before removing
+  the container
+
+The package, persistence, privacy, and medical-safety boundaries are defined in
+`docs/14-pregnancy-domain-architecture-decision.md`.
+
+---
+
 # API
 
 REST

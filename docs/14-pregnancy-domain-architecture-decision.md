@@ -1,8 +1,8 @@
 # Pregnancy Domain Architecture Decision
 
-Version: 1.1
+Version: 1.2
 
-Status: Approved — Sprint 2.5B Ready
+Status: Approved — Sprint 2.5B Implemented
 
 Phase: MVP Domain Foundation
 
@@ -748,3 +748,47 @@ Review this decision when:
 - `docs/12-authentication-architecture-decision.md`
 - `docs/13-family-domain-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
+
+---
+
+# 27. Sprint 2.5B Implementation Record
+
+Status: Implemented
+
+The minimum vertical is implemented with these boundaries:
+
+- `@lumora/pregnancy` owns strict Zod input validation, Pregnancy contracts,
+  repository contracts, and infrastructure-independent application behavior.
+- `@lumora/database` owns the Prisma model, additive migration, shared-client
+  repository, serializable creation transaction, and membership-scoped queries.
+- `apps/api` composes the existing authentication guard, neutral principal,
+  Pregnancy application service, persistence, deterministic responses, and safe
+  HTTP errors.
+
+The additive migration creates only `pregnancy` with `id`, `familyId`,
+`displayName`, `createdAt`, and `updatedAt`. The required Family foreign key
+uses restrictive deletion behavior, `displayName` is required without a
+default or uniqueness constraint, and the Family-scoped list path has one
+`familyId` index.
+
+The implemented HTTP behavior is:
+
+- `POST /families/:familyId/pregnancies` returns HTTP 201 with one minimum
+  Pregnancy representation.
+- `GET /families/:familyId/pregnancies` returns
+  `{ "pregnancies": Pregnancy[] }`.
+- `GET /families/:familyId/pregnancies/:pregnancyId` returns one minimum
+  Pregnancy representation.
+- `Pregnancy` contains only `id`, `familyId`, `displayName`, `createdAt`, and
+  `updatedAt`.
+- Unknown and inaccessible Family outcomes use the same `FAMILY_NOT_FOUND` HTTP
+  404 response for create and list.
+- Unknown, inaccessible, path-mismatched, and missing-Family direct Pregnancy
+  lookups use the same `PREGNANCY_NOT_FOUND` HTTP 404 response.
+
+Creation checks the persisted `familyId`/`userId` membership and writes the
+Pregnancy in one serializable database transaction. List and direct-get queries
+embed the authenticated User's persisted FamilyMembership scope. The repeatable
+`pnpm test:pregnancy:postgres` command builds the repository, validates and
+deploys all migrations to disposable PostgreSQL 16, runs the authentication,
+Family, and Pregnancy runtime suites, and removes the container.

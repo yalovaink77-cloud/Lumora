@@ -7,3 +7,4 @@ export {
   PrismaClient,
 } from "./prisma-client";
 export { PrismaFamilyRepository } from "./prisma-family.repository";
+export { PrismaPregnancyRepository } from "./prisma-pregnancy.repository";

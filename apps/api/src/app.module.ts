@@ -6,6 +6,7 @@ import { DatabaseModule } from "./database/database.module";
 import { FamilyModule } from "./family/family.module";
 import { HealthModule } from "./health/health.module";
 import { HttpBodyModule } from "./http/http-body.module";
+import { PregnancyModule } from "./pregnancy/pregnancy.module";
 import { areTestHttpRoutesEnabled } from "./test-http/test-http.config";
 import { TestHttpModule } from "./test-http/test-http.module";
 
@@ -23,6 +24,7 @@ const optionalTestHttpModule: Type[] = areTestHttpRoutesEnabled()
     AuthModule,
     HttpBodyModule,
     FamilyModule,
+    PregnancyModule,
     ...optionalTestHttpModule,
     HealthModule,
   ],

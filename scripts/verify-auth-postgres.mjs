@@ -174,6 +174,13 @@ try {
       env: testEnvironment,
     },
   );
+  run(
+    "pnpm",
+    ["--filter", "@lumora/api", "run", "test:pregnancy:postgres:runtime"],
+    {
+      env: testEnvironment,
+    },
+  );
 } finally {
   removeContainer();
 }
