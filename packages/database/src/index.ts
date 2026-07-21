@@ -5,4 +5,5 @@ export {
   disconnectPrismaClient,
   getPrismaClient,
   PrismaClient,
-} from './prisma-client';
+} from "./prisma-client";
+export { PrismaFamilyRepository } from "./prisma-family.repository";

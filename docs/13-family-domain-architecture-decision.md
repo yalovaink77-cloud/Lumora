@@ -1,6 +1,6 @@
 # Family Domain Architecture Decision
 
-Version: 1.0
+Version: 1.1
 
 Status: Approved
 
@@ -268,7 +268,7 @@ The documented family package owns:
 - family-scoped authorization contracts,
 - and application behavior independent of NestJS and Better Auth.
 
-This decision does not create or implement the package.
+Sprint 2.4B implements this boundary as `@lumora/family`.
 
 ## `@lumora/database`
 
@@ -574,3 +574,40 @@ Review this decision when:
 - `docs/11-founder-independence-and-long-term-continuity.md`
 - `docs/12-authentication-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
+
+---
+
+# 25. Sprint 2.4B Implementation Record
+
+Status: Implemented
+
+The minimum vertical is implemented with these boundaries:
+
+- `@lumora/family` owns input validation, Family and FamilyMembership contracts,
+  the `OWNER` creation invariant, and infrastructure-independent application
+  behavior.
+- `@lumora/database` owns the Prisma schema, migration, shared-client repository,
+  transaction, and membership-scoped queries.
+- `apps/api` composes the domain service and repository with the neutral
+  authenticated principal and maps outcomes to HTTP.
+
+The additive migration creates `family`, `family_membership`, and the
+`FamilyMembershipRole` enum. The membership relation has a unique
+`familyId`/`userId` pair and a `userId` lookup index. Family deletion cascades
+only to its memberships; User deletion is restricted while memberships exist
+and cannot cascade to Family.
+
+The implemented HTTP response shapes are:
+
+- `POST /families` returns HTTP 201 with `{ "family": Family,
+"membership": FamilyMembership }`.
+- `GET /families` returns `{ "families": Family[] }`.
+- `GET /families/:familyId` returns `Family`.
+- `Family` contains only `id`, `displayName`, `createdAt`, and `updatedAt`.
+- `FamilyMembership` contains only `id`, `familyId`, `userId`, `role`,
+  `createdAt`, and `updatedAt`.
+
+Unknown and inaccessible direct lookups both return the same
+`FAMILY_NOT_FOUND` HTTP 404 response. PostgreSQL migration, authentication, and
+Family runtime verification share the disposable Docker suite exposed through
+`pnpm test:family:postgres` and `pnpm test:auth:postgres`.

@@ -320,6 +320,31 @@ Authentication integration belongs inside the auth package.
 
 ---
 
+# Family Foundation
+
+Implementation (Sprint 2.4B):
+
+- Domain and application contracts: `@lumora/family`
+- Module format: CommonJS, matching the NestJS API and database adapter that
+  compose the package without introducing another runtime module bridge
+- Persistence adapter: `PrismaFamilyRepository` in `@lumora/database`
+- API composition: `apps/api/src/family`
+- Endpoints: `POST /families`, `GET /families`, and
+  `GET /families/:familyId`
+- Authorization: neutral authenticated User identifier plus database-backed
+  FamilyMembership scope; Family identifiers alone do not grant access
+- Creation: Family and initial `OWNER` membership are committed in one Prisma
+  transaction
+- PostgreSQL verification: `pnpm test:family:postgres` builds the repository,
+  deploys all migrations to disposable PostgreSQL 16, runs the existing
+  authentication lifecycle, verifies Family persistence and HTTP isolation,
+  and removes the container
+
+The package and persistence boundaries are defined in
+`docs/13-family-domain-architecture-decision.md`.
+
+---
+
 # API
 
 REST

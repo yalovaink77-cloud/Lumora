@@ -40,6 +40,9 @@ importers:
       '@lumora/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@lumora/family':
+        specifier: workspace:*
+        version: link:../../packages/family
       '@nestjs/common':
         specifier: ^11.1.14
         version: 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -106,6 +109,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@lumora/family':
+        specifier: workspace:*
+        version: link:../family
       '@prisma/client':
         specifier: ^6.19.2
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
@@ -121,6 +127,19 @@ importers:
         version: 8.65.0(eslint@10.7.0(jiti@2.7.0))(typescript@5.9.3)
 
   packages/domain: {}
+
+  packages/family:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.65.0
+        version: 8.65.0(eslint@10.7.0(jiti@2.7.0))(typescript@5.9.3)
 
   packages/shared: {}
 

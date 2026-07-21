@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id                String             @id
+  name              String
+  email             String
+  emailVerified     Boolean            @default(false)
+  image             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  familyMemberships FamilyMembership[]
 
   @@unique([email])
   @@map("user")
@@ -68,4 +69,33 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum FamilyMembershipRole {
+  OWNER
+}
+
+model Family {
+  id          String             @id @default(cuid())
+  displayName String             @db.VarChar(100)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  memberships FamilyMembership[]
+
+  @@map("family")
+}
+
+model FamilyMembership {
+  id        String               @id @default(cuid())
+  familyId  String
+  userId    String
+  role      FamilyMembershipRole
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  family    Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([familyId, userId])
+  @@index([userId])
+  @@map("family_membership")
 }

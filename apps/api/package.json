@@ -11,12 +11,14 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "pnpm run test:unit && pnpm run test:integration",
     "test:auth:postgres:runtime": "node --import tsx --test src/auth/auth.postgres.integration.ts",
+    "test:family:postgres:runtime": "node --import tsx --test src/family/family.postgres.integration.ts",
     "test:unit": "node --import tsx --test --test-concurrency=1 $(find src -name '*.test.ts' ! -name '*.integration.test.ts' -print)",
     "test:integration": "node --import tsx --test --test-force-exit src/**/*.integration.test.ts"
   },
   "dependencies": {
     "@lumora/auth": "workspace:*",
     "@lumora/database": "workspace:*",
+    "@lumora/family": "workspace:*",
     "better-auth": "1.6.23",
     "@nestjs/common": "^11.1.14",
     "@nestjs/config": "^4.0.3",
