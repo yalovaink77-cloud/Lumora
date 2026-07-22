@@ -297,7 +297,17 @@ Sprint 2.12B minimum mobile Child list/create/detail/displayName edit
 - Family-scoped process-memory Child state
 - Family detail Children entry; Timeline UI and Pregnancy linkage still deferred
 
-Next gate: minimum Timeline mobile experience architecture (documentation-first)
+Sprint 2.13A minimum mobile Timeline experience architecture (approved; client
+not implemented):
+
+- Separate Pregnancy and Child Timeline route trees under subject detail paths
+- Cookie-session Timeline API client boundary with exactly-one-subject DTO
+  validation, timeout, abort, and subject-scoped process-memory state
+- Expo-compatible `@react-native-community/datetimepicker` required for
+  Sprint 2.13B occurredAt capture; not installed in 2.13A
+- Media/Health/AI Timeline UI and combined feeds still deferred
+
+Next gate: Sprint 2.13B minimum mobile Timeline list/create/detail
 
 ---
 
@@ -541,7 +551,10 @@ Implementation (Sprint 2.7B):
   before removing the container
 
 The package, persistence, chronology, privacy, and medical-safety boundaries are
-defined in `docs/16-timeline-domain-architecture-decision.md`.
+defined in `docs/16-timeline-domain-architecture-decision.md`. The minimum
+mobile Timeline client architecture is approved in
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
+(Sprint 2.13A; implementation Sprint 2.13B).
 
 ---
 
@@ -576,6 +589,9 @@ Current verified application state:
 - Sprint 2.12B minimum mobile Child list/create/detail/displayName edit is
   implemented per
   `docs/23-minimum-mobile-child-experience-architecture-decision.md`
+- Sprint 2.13A minimum mobile Timeline experience architecture is approved;
+  client implementation is Sprint 2.13B per
+  `docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
 - Canonical safety copy is owned by `@lumora/shared`
 
 ---

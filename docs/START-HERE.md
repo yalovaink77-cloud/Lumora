@@ -67,6 +67,7 @@ Every new contributor should read the documentation in the following order.
 22. 21-minimum-mobile-family-experience-architecture-decision.md
 23. 22-minimum-mobile-pregnancy-experience-architecture-decision.md
 24. 23-minimum-mobile-child-experience-architecture-decision.md
+25. 24-minimum-mobile-timeline-experience-architecture-decision.md
 
 Do not skip this order.
 

@@ -737,7 +737,8 @@ This decision does not implement or approve:
 
 Deferred:
 
-- Pregnancy Timeline mobile entry after a dedicated Timeline mobile ADR
+- Pregnancy Timeline mobile entry after ADR-024 / Sprint 2.13B
+  (`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`)
 - Pregnancy `displayName` update/rename UX (no update endpoint today)
 - any future medical or date fields only through ADR-014 review triggers
 - Child UI after ADR-023 / Sprint 2.12B
@@ -830,4 +831,7 @@ truthful substitute.
 Minimum Child mobile list/create/detail/displayName-edit is implemented in
 Sprint 2.12B per
 `docs/23-minimum-mobile-child-experience-architecture-decision.md`.
-Minimum Timeline mobile architecture remains the next documentation-first gate.
+Minimum Timeline mobile list/create/detail architecture is approved in
+Sprint 2.13A per
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
+(implementation Sprint 2.13B).

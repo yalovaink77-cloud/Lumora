@@ -1174,6 +1174,12 @@ No update, deletion, upsert, reassignment, combined feed, pagination, Media,
 Health, AI, notification, medical interpretation, or Pregnancy-to-Child
 behavior is implemented.
 
+Both `OWNER` and `MEMBER` retain create/list/direct-get access under ADR-017.
+The minimum mobile Timeline list/create/detail experience is architecturally
+approved in Sprint 2.13A per
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
+(implementation Sprint 2.13B).
+
 ---
 
 # 31. References

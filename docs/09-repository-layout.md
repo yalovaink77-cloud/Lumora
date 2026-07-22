@@ -103,6 +103,10 @@ Sprint 2.11B per
 The minimum mobile Child list/create/detail/displayName-edit experience is
 implemented in Sprint 2.12B per
 `docs/23-minimum-mobile-child-experience-architecture-decision.md`.
+The minimum mobile Timeline list/create/detail experience is architecturally
+approved in Sprint 2.13A per
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
+(implementation Sprint 2.13B).
 
 ---
 
