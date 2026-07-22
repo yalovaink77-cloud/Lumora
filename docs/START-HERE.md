@@ -62,6 +62,7 @@ Every new contributor should read the documentation in the following order.
 17. 16-timeline-domain-architecture-decision.md
 18. 17-family-roles-and-membership-entry-architecture-decision.md
 19. 18-verified-email-ownership-architecture-decision.md
+20. 19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md
 
 Do not skip this order.
 

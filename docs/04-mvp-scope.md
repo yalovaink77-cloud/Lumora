@@ -14,7 +14,9 @@ Deliver a small, usable, private product that allows a mother to organize the es
 - View timeline chronologically
 - Basic family member roles
 - Privacy-aware access control
-- Medical safety and AI disclaimers
+- Medical safety and AI disclaimers (canonical meaning approved in
+  `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`;
+  user-facing presentation remains pending a capable primary client)
 
 ## 3. Excluded Features
 
@@ -31,7 +33,9 @@ Deliver a small, usable, private product that allows a mother to organize the es
 - A pregnancy or child can be represented clearly within a family context.
 - Meaningful entries can be recorded and viewed chronologically.
 - Private information is visible only within its intended family boundary.
-- The product communicates its medical and AI limitations clearly.
+- The product communicates its medical and AI limitations clearly through the
+  approved disclosure surfaces in
+  `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
 - The MVP is coherent, usable, and limited to its documented scope.
 
 ## 5. Future Phases (Phase 2, Phase 3)

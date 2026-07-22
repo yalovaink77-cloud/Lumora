@@ -2,6 +2,11 @@
 
 This document defines product-level policies for privacy, safety, and trust. It states intent and boundaries only — not implementation, legal advice, or technical design.
 
+The minimum MVP user-facing medical-safety and AI-limitation disclosure —
+including canonical English meaning, approved surfaces, non-persistence rules,
+and the client presentation gate — is defined in
+`docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
+
 ---
 
 ## 1. Privacy Principles
@@ -27,6 +32,11 @@ This document defines product-level policies for privacy, safety, and trust. It 
 - The product must never discourage users from seeking professional medical care.
 - Health-related guidance favors caution and clear limitations.
 - Uncertain or high-risk situations should direct users toward qualified professionals.
+- For the current MVP, the approved user-facing disclosure states that Lumora
+  does not provide medical advice, diagnosis, treatment, or emergency services,
+  and that recorded information is user-provided and may be incomplete or
+  inaccurate. See
+  `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
 
 ## 4. AI Safety Rules
 
@@ -36,6 +46,10 @@ This document defines product-level policies for privacy, safety, and trust. It 
 - AI defers to qualified healthcare professionals for medical decisions.
 - AI behavior must remain consistent with all privacy and safety principles.
 - AI must never fabricate medical facts or present uncertain information as established medical knowledge.
+- The current MVP has no user-facing AI features enabled. The approved
+  disclosure must not imply current AI processing and is not consent for future
+  AI training or processing. See
+  `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
 
 ## 5. Data Security
 

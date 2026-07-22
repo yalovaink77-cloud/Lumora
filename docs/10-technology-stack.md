@@ -470,6 +470,34 @@ defined in `docs/16-timeline-domain-architecture-decision.md`.
 
 ---
 
+# MVP Medical Safety and AI Disclosure
+
+Decision (Sprint 2.9A):
+`docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
+
+Approved boundary:
+
+- One product-owned English canonical disclosure with content identifier
+  `lumora.safety.mvp.medical-ai.v1`
+- Audience: every authenticated user; identical for OWNER and MEMBER
+- Surfaces: first authenticated application entry, plus a permanent
+  Safety & Limitations location
+- No acknowledgment, consent history, database field, table, or migration
+- No REST endpoint is required for the static MVP disclosure
+- Future presentation may export the canonical copy from `@lumora/shared`
+- Presentation ownership belongs to the primary user-facing client
+  (`apps/mobile`)
+
+Current verified application state:
+
+- `apps/api` is not a user-facing disclosure surface
+- `apps/mobile` currently has no authenticated UI and cannot yet satisfy the
+  approved surfaces
+- Sprint 2.9B presentation remains blocked until a capable primary client shell
+  exists
+
+---
+
 # API
 
 REST
@@ -530,6 +558,15 @@ Supported architecture:
 - OpenRouter
 
 AI integrations belong inside the AI package.
+
+Current MVP status:
+
+- No user-facing AI feature is implemented.
+- The reserved `packages/ai` layout location does not enable AI product
+  behavior.
+- The approved MVP disclosure must not imply current AI processing or act as
+  consent for future AI training. See
+  `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
 
 ---
 
