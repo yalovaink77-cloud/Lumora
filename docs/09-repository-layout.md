@@ -97,6 +97,9 @@ shell. Sprint 2.9B.3 presents ADR-019 Safety & Limitations via
 permanent Safety route from Home. The minimum mobile Family list/create/detail experience is implemented in
 Sprint 2.10B per
 `docs/21-minimum-mobile-family-experience-architecture-decision.md`.
+The minimum mobile Pregnancy experience is defined in
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
+(implementation: Sprint 2.11B).
 
 ---
 

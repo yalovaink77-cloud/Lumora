@@ -281,8 +281,11 @@ Sprint 2.10B minimum mobile Family list/create/detail (implemented):
 - Process-memory Family state cleared on sign-out/principal change
 - Home Families entry; Pregnancy/Child/Timeline UI still deferred
 
-Next gate: minimum Pregnancy mobile experience architecture (documentation-
-first), after Family UI foundation
+Sprint 2.11A minimum mobile Pregnancy list/create/detail architecture
+(documentation complete; client not implemented):
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
+
+Next gate: Sprint 2.11B minimum mobile Pregnancy list/create/detail
 
 ---
 
@@ -554,6 +557,8 @@ Current verified application state:
 - Sprint 2.9B.1–2.9B.3 authenticated shell + disclosure presentation is
   implemented
 - Sprint 2.10B minimum mobile Family list/create/detail is implemented
+- Sprint 2.11A minimum mobile Pregnancy experience architecture is documented
+  (UI deferred to Sprint 2.11B)
 - Canonical safety copy is owned by `@lumora/shared`
 
 ---

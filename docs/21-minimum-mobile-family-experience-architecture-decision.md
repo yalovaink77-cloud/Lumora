@@ -635,5 +635,6 @@ passed without native prebuild or `android/`/`ios/` directories.
 
 ## 19.6 Next truthful UI checkpoint
 
-Minimum Pregnancy mobile list/create/detail architecture (documentation-first),
-only after ADR-aligned Family UI is complete — do not begin that sprint here.
+Minimum Pregnancy mobile list/create/detail architecture is documented in
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
+(Sprint 2.11A). Implementation follows in Sprint 2.11B.

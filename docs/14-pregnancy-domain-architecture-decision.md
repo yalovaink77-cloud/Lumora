@@ -747,6 +747,10 @@ Review this decision when:
 - `docs/11-founder-independence-and-long-term-continuity.md`
 - `docs/12-authentication-architecture-decision.md`
 - `docs/13-family-domain-architecture-decision.md`
+- `docs/17-family-roles-and-membership-entry-architecture-decision.md`
+- `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`
+- `docs/21-minimum-mobile-family-experience-architecture-decision.md`
+- `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
 
 ---
@@ -792,3 +796,9 @@ embed the authenticated User's persisted FamilyMembership scope. The repeatable
 `pnpm test:pregnancy:postgres` command builds the repository, validates and
 deploys all migrations to disposable PostgreSQL 16, runs the authentication,
 Family, and Pregnancy runtime suites, and removes the container.
+
+Both `OWNER` and `MEMBER` retain create/list/direct-get access under ADR-017.
+No Pregnancy mobile UI is implemented in Sprint 2.5B; the minimum mobile
+Pregnancy client architecture is documented in
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
+(implementation: Sprint 2.11B).
