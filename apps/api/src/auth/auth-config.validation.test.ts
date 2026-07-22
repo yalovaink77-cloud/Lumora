@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, test } from 'node:test';
 
 import {
+  InMemoryVerificationEmailCaptureAdapter,
   parseTrustedOrigins,
   validateAuthRuntimeConfig,
 } from '@lumora/auth';
@@ -10,6 +11,9 @@ const validEnv = {
   BETTER_AUTH_SECRET: 'unit-test-secret-value-with-32-chars-minimum',
   BETTER_AUTH_URL: 'http://localhost:3000',
   AUTH_TRUSTED_ORIGINS: 'http://localhost:3000',
+  AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: 'capture',
+  AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL:
+    'http://localhost:3000/verify-email',
   NODE_ENV: 'development',
   DATABASE_URL: 'postgresql://lumora:lumora@127.0.0.1:5432/lumora?schema=public',
 };
@@ -18,6 +22,10 @@ beforeEach(() => {
   process.env.BETTER_AUTH_SECRET = validEnv.BETTER_AUTH_SECRET;
   process.env.BETTER_AUTH_URL = validEnv.BETTER_AUTH_URL;
   process.env.AUTH_TRUSTED_ORIGINS = validEnv.AUTH_TRUSTED_ORIGINS;
+  process.env.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE =
+    validEnv.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE;
+  process.env.AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL =
+    validEnv.AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL;
   process.env.NODE_ENV = validEnv.NODE_ENV;
   process.env.DATABASE_URL = validEnv.DATABASE_URL;
 });
@@ -26,10 +34,16 @@ afterEach(() => {
   delete process.env.BETTER_AUTH_SECRET;
   delete process.env.BETTER_AUTH_URL;
   delete process.env.AUTH_TRUSTED_ORIGINS;
+  delete process.env.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE;
+  delete process.env.AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL;
 });
 
 test('validateAuthRuntimeConfig passes with valid configuration', () => {
-  assert.doesNotThrow(() => validateAuthRuntimeConfig(process.env));
+  assert.doesNotThrow(() =>
+    validateAuthRuntimeConfig(process.env, {
+      captureAdapter: new InMemoryVerificationEmailCaptureAdapter(),
+    }),
+  );
 });
 
 test('validateAuthRuntimeConfig fails when BETTER_AUTH_SECRET is missing', () => {

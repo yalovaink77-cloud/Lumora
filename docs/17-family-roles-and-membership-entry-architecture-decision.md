@@ -1,8 +1,8 @@
 # Basic Family Roles and Membership Entry Architecture Decision
 
-Version: 1.1
+Version: 1.2
 
-Status: Approved — Verified Email Implementation Pending
+Status: Approved — Implementation Ready
 
 Phase: MVP Family Collaboration Foundation
 
@@ -1149,9 +1149,9 @@ enums, package abstractions, or permissions.
 
 ---
 
-# 26. Sprint 2.8B Implementation Gate and Exact Blocker
+# 26. Sprint 2.8B Implementation Gate
 
-Sprint 2.8B is blocked.
+Sprint 2.8B is unblocked.
 
 All Family-role, permission, invitation, lifecycle, API, persistence, privacy,
 and package decisions required for the minimum vertical are approved here.
@@ -1159,19 +1159,12 @@ and package decisions required for the minimum vertical are approved here.
 The verified-email architecture is approved in
 `docs/18-verified-email-ownership-architecture-decision.md`.
 
-The one remaining blocker is implementation:
+Sprint 2.8A.2 implemented and PostgreSQL-verified the approved canonical email,
+delivery, Better Auth, principal, privacy, session, scanner-resistance, and
+testing requirements without introducing a second authentication system or
+custom verification cryptography.
 
-**Lumora has not yet implemented and PostgreSQL-verified the approved way to
-establish trustworthy verified control of the canonical email bound to an
-authenticated Better Auth User.**
-
-Sprint 2.8A.2 is the approved prerequisite implementation sprint. It must follow
-the exact canonicalization, delivery, Better Auth, principal, privacy, session,
-and testing requirements in the verified-email ADR without introducing a second
-authentication system or custom verification cryptography.
-
-Sprint 2.8B may begin only after the verified-email prerequisite is implemented,
-PostgreSQL-verified, documented, and committed. It may then implement only:
+Sprint 2.8B may implement only:
 
 - MEMBER enum support,
 - exactly-one-OWNER preservation,

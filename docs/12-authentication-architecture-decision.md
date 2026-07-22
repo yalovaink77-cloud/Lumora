@@ -1,6 +1,6 @@
 # Authentication Architecture Decision
 
-Version: 1.1
+Version: 1.2
 
 Status: Approved
 
@@ -375,9 +375,9 @@ remains pending in Sprint 2.8A.2.
 - The repeatable command is `pnpm test:auth:postgres`. It creates and removes an
   isolated `postgres:16-alpine` container and does not require persistent test data.
 
-## Approved verified-email extension (Sprint 2.8A.1)
+## Implemented verified-email extension (Sprint 2.8A.2)
 
-The future neutral principal adds trusted `emailVerified: boolean` while
+The neutral principal includes trusted `emailVerified: boolean` while
 retaining the current `id`, canonical `email`, and `name`.
 
 This assurance:
@@ -390,6 +390,16 @@ This assurance:
 The exact architecture, delivery boundary, canonicalization, token behavior,
 privacy requirements, and implementation gate are defined in
 `docs/18-verified-email-ownership-architecture-decision.md`.
+
+The implemented authenticated facades are:
+
+- `POST /auth/email-verification/request`,
+- `POST /auth/email-verification/confirm`.
+
+Better Auth's raw verification GET and public resend endpoints are externally
+blocked. Disposable PostgreSQL verification confirms the authoritative
+false-to-true transition, fresh principal state, replay behavior, and unchanged
+migration history.
 
 ---
 

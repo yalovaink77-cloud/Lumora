@@ -63,6 +63,7 @@ test('AuthGuard attaches a neutral principal for valid session', async () => {
           user: {
             id: 'user-1',
             email: 'user@example.com',
+            emailVerified: true,
             name: 'Test User',
           },
         }),
@@ -76,6 +77,7 @@ test('AuthGuard attaches a neutral principal for valid session', async () => {
     [AUTH_PRINCIPAL_KEY]?: {
       id: string;
       email: string;
+      emailVerified: boolean;
       name: string;
     };
   } = { headers: { cookie: 'session=opaque-value' } };
@@ -84,6 +86,7 @@ test('AuthGuard attaches a neutral principal for valid session', async () => {
   assert.deepEqual(request[AUTH_PRINCIPAL_KEY], {
     id: 'user-1',
     email: 'user@example.com',
+    emailVerified: true,
     name: 'Test User',
   });
   assert.equal('token' in (request[AUTH_PRINCIPAL_KEY] ?? {}), false);

@@ -14,6 +14,7 @@ import { ChildController } from "./child.controller";
 const principal: AuthenticatedPrincipal = {
   id: "authenticated-user",
   email: "user@example.test",
+  emailVerified: false,
   name: "Test User",
 };
 

@@ -4,10 +4,12 @@ import { createServer } from 'node:net';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { test } from 'node:test';
 
+import { preflightCanonicalUserEmails } from '@lumora/auth';
 import {
   disconnectPrismaClient,
   getPrismaClient,
 } from '@lumora/database';
+import { createEmailVerificationToken } from 'better-auth/api';
 
 const testDatabaseUrl = process.env.AUTH_TEST_DATABASE_URL;
 
@@ -142,6 +144,31 @@ function assertSafeResponseBody(
   }
 }
 
+async function assertInvalidVerificationResponse(
+  response: Response,
+  secretInput: string,
+): Promise<void> {
+  const text = await response.text();
+
+  assert.equal(response.status, 400);
+  assert.deepEqual(JSON.parse(text), {
+    statusCode: 400,
+    code: 'EMAIL_VERIFICATION_INVALID',
+    message: 'This email verification link is invalid or expired.',
+  });
+  assert.ok(!text.includes(secretInput));
+}
+
+function fetchCapturedVerificationEmails(
+  baseUrl: string,
+  testHttpSecret: string,
+): Promise<Response> {
+  return fetch(`${baseUrl}/__test/email-verification-deliveries`, {
+    headers: { 'x-lumora-test-secret': testHttpSecret },
+    signal: AbortSignal.timeout(10_000),
+  });
+}
+
 test('real PostgreSQL authentication lifecycle uses and revokes a server-managed session', async () => {
   assertDisposableDatabaseUrl(testDatabaseUrl);
   process.env.DATABASE_URL = testDatabaseUrl;
@@ -149,21 +176,30 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
   const prisma = getPrismaClient();
   const apiPort = await getAvailablePort();
   const baseUrl = `http://127.0.0.1:${apiPort}`;
-  const email = `auth-runtime-${randomUUID()}@example.test`;
+  const submittedEmail = `Auth-Runtime-${randomUUID()}@Example.Test`;
+  const email = submittedEmail.toLowerCase();
   const password = `Runtime-${randomBytes(18).toString('base64url')}!`;
   const authSecret = randomBytes(48).toString('base64url');
+  const testHttpSecret = randomBytes(32).toString('base64url');
   let childOutput = '';
   let userId: string | undefined;
+  let secondUserId: string | undefined;
+  const verificationTokens: string[] = [];
+
+  await preflightCanonicalUserEmails();
 
   const child = spawn('node', ['dist/main.js'], {
     cwd: process.cwd(),
     env: {
       ...process.env,
       AUTH_TRUSTED_ORIGINS: baseUrl,
+      AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: 'capture',
+      AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL: `${baseUrl}/verify-email`,
       BETTER_AUTH_SECRET: authSecret,
       BETTER_AUTH_URL: baseUrl,
       DATABASE_URL: testDatabaseUrl,
-      LUMORA_ENABLE_TEST_HTTP_ROUTES: 'false',
+      LUMORA_ENABLE_TEST_HTTP_ROUTES: 'true',
+      LUMORA_TEST_HTTP_SECRET: testHttpSecret,
       NODE_ENV: 'test',
       PORT: String(apiPort),
     },
@@ -203,7 +239,7 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
         Origin: baseUrl,
       },
       body: JSON.stringify({
-        email,
+        email: submittedEmail,
         name: 'Runtime Verification User',
         password,
       }),
@@ -233,6 +269,63 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
     assert.equal(signUpBody.user?.name, 'Runtime Verification User');
     assert.ok(signUpBody.user?.id);
     userId = signUpBody.user.id;
+
+    assert.equal(
+      (
+        await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { emailVerified: true },
+        })
+      ).emailVerified,
+      false,
+    );
+    await preflightCanonicalUserEmails();
+
+    assert.equal(
+      (
+        await fetch(`${baseUrl}/__test/email-verification-deliveries`, {
+          signal: AbortSignal.timeout(10_000),
+        })
+      ).status,
+      404,
+    );
+    const registrationDeliveriesResponse = await fetchCapturedVerificationEmails(
+      baseUrl,
+      testHttpSecret,
+    );
+    const registrationDeliveriesBody =
+      (await registrationDeliveriesResponse.json()) as {
+        deliveries: Array<{
+          confirmationUrl: string;
+          expiresInSeconds: number;
+          recipient: string;
+          templateId: string;
+        }>;
+      };
+
+    assert.equal(registrationDeliveriesResponse.status, 200);
+    assert.equal(registrationDeliveriesBody.deliveries.length, 1);
+    assert.equal(registrationDeliveriesBody.deliveries[0]?.recipient, email);
+    assert.equal(
+      registrationDeliveriesBody.deliveries[0]?.expiresInSeconds,
+      900,
+    );
+    assert.equal(
+      registrationDeliveriesBody.deliveries[0]?.templateId,
+      'lumora-email-verification-v1',
+    );
+
+    const registrationConfirmationUrl = new URL(
+      registrationDeliveriesBody.deliveries[0]?.confirmationUrl ?? '',
+    );
+    assert.equal(registrationConfirmationUrl.origin, baseUrl);
+    assert.equal(registrationConfirmationUrl.pathname, '/verify-email');
+    assert.equal(registrationConfirmationUrl.search, '');
+    const registrationToken = new URLSearchParams(
+      registrationConfirmationUrl.hash.slice(1),
+    ).get('token');
+    assert.ok(registrationToken);
+    verificationTokens.push(registrationToken);
 
     const account = await prisma.account.findFirst({
       where: {
@@ -273,6 +366,15 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
 
     assert.equal(signInBody.token, undefined);
     assert.equal(signInBody.user?.password, undefined);
+    assert.equal(
+      (
+        (await (
+          await fetchCapturedVerificationEmails(baseUrl, testHttpSecret)
+        ).json()) as { deliveries: unknown[] }
+      ).deliveries.length,
+      1,
+      'sign-in must not issue another verification email',
+    );
 
     const persistedSession = await prisma.session.findUnique({
       where: {
@@ -297,8 +399,327 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
     ]);
     assert.deepEqual(JSON.parse(meText), {
       email,
+      emailVerified: false,
       id: userId,
       name: 'Runtime Verification User',
+    });
+
+    const rawVerifyResponse = await fetch(
+      `${baseUrl}/api/auth/verify-email?token=${encodeURIComponent(registrationToken)}`,
+      { signal: AbortSignal.timeout(10_000) },
+    );
+    assert.equal(rawVerifyResponse.status, 404);
+
+    const rawResendResponse = await fetch(
+      `${baseUrl}/api/auth/send-verification-email`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: baseUrl,
+        },
+        body: JSON.stringify({ email }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(rawResendResponse.status, 404);
+
+    const scannerGetResponse = await fetch(
+      `${baseUrl}/auth/email-verification/confirm?token=${encodeURIComponent(registrationToken)}`,
+      { signal: AbortSignal.timeout(10_000) },
+    );
+    assert.equal(scannerGetResponse.status, 404);
+    assert.equal(
+      (
+        await fetch(`${baseUrl}/auth/email-verification/request`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}',
+          signal: AbortSignal.timeout(10_000),
+        })
+      ).status,
+      401,
+    );
+    assert.equal(
+      (
+        await fetch(`${baseUrl}/auth/email-verification/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: registrationToken }),
+          signal: AbortSignal.timeout(10_000),
+        })
+      ).status,
+      401,
+    );
+    assert.equal(
+      (
+        await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { emailVerified: true },
+        })
+      ).emailVerified,
+      false,
+    );
+
+    const callerSelectedEmailResponse = await fetch(
+      `${baseUrl}/auth/email-verification/request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: JSON.stringify({ email: 'other@example.test' }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    const callerSelectedEmailText = await callerSelectedEmailResponse.text();
+    assert.equal(callerSelectedEmailResponse.status, 400);
+    assert.deepEqual(JSON.parse(callerSelectedEmailText), {
+      statusCode: 400,
+      code: 'INVALID_EMAIL_VERIFICATION_REQUEST',
+      message: 'Invalid email verification request.',
+    });
+    assert.ok(!callerSelectedEmailText.includes('other@example.test'));
+
+    const requestVerificationResponse = await fetch(
+      `${baseUrl}/auth/email-verification/request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: '{}',
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(requestVerificationResponse.status, 202);
+    assert.deepEqual(await requestVerificationResponse.json(), {
+      status: 'accepted',
+    });
+
+    const requestedDeliveries = (await (
+      await fetchCapturedVerificationEmails(baseUrl, testHttpSecret)
+    ).json()) as {
+      deliveries: Array<{ confirmationUrl: string; recipient: string }>;
+    };
+    assert.equal(requestedDeliveries.deliveries.length, 2);
+    assert.equal(requestedDeliveries.deliveries[1]?.recipient, email);
+    const confirmationToken = new URLSearchParams(
+      new URL(requestedDeliveries.deliveries[1]?.confirmationUrl ?? '').hash.slice(1),
+    ).get('token');
+    assert.ok(confirmationToken);
+    verificationTokens.push(confirmationToken);
+
+    const secondEmail = `second-${randomUUID()}@example.test`;
+    const secondPassword = `Second-${randomBytes(18).toString('base64url')}!`;
+    const secondSignUpResponse = await fetch(
+      `${baseUrl}/api/auth/sign-up/email`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: baseUrl,
+        },
+        body: JSON.stringify({
+          email: secondEmail,
+          name: 'Second Verification User',
+          password: secondPassword,
+        }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    const secondCookie = parseSessionCookie(secondSignUpResponse);
+    const secondSignUpBody = (await secondSignUpResponse.json()) as {
+      user?: { id?: string };
+    };
+    assert.equal(secondSignUpResponse.status, 200);
+    assert.ok(secondSignUpBody.user?.id);
+    secondUserId = secondSignUpBody.user.id;
+
+    const wrongSessionResponse = await fetch(
+      `${baseUrl}/auth/email-verification/confirm`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: secondCookie.cookie,
+        },
+        body: JSON.stringify({ token: confirmationToken }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    const wrongSessionText = await wrongSessionResponse.text();
+    assert.equal(wrongSessionResponse.status, 400);
+    assert.deepEqual(JSON.parse(wrongSessionText), {
+      statusCode: 400,
+      code: 'EMAIL_VERIFICATION_INVALID',
+      message: 'This email verification link is invalid or expired.',
+    });
+    assert.ok(!wrongSessionText.includes(confirmationToken));
+    assert.equal(
+      await prisma.user.count({
+        where: {
+          id: { in: [userId, secondUserId] },
+          emailVerified: true,
+        },
+      }),
+      0,
+    );
+
+    for (const invalidToken of [
+      'not-a-jwt',
+      `${confirmationToken.slice(0, -1)}x`,
+      await createEmailVerificationToken(
+        authSecret,
+        email,
+        undefined,
+        -1,
+      ),
+    ]) {
+      verificationTokens.push(invalidToken);
+      await assertInvalidVerificationResponse(
+        await fetch(`${baseUrl}/auth/email-verification/confirm`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Cookie: signInCookie.cookie,
+          },
+          body: JSON.stringify({ token: invalidToken }),
+          signal: AbortSignal.timeout(10_000),
+        }),
+        invalidToken,
+      );
+    }
+
+    const sessionCountBeforeVerification = await prisma.session.count({
+      where: { userId },
+    });
+    const confirmResponse = await fetch(
+      `${baseUrl}/auth/email-verification/confirm`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: JSON.stringify({ token: confirmationToken }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(confirmResponse.status, 200);
+    assert.deepEqual(await confirmResponse.json(), { status: 'verified' });
+    assert.equal(confirmResponse.headers.get('set-cookie'), null);
+    assert.equal(confirmResponse.headers.get('cache-control'), 'no-store');
+    assert.equal(confirmResponse.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(
+      (
+        await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { emailVerified: true },
+        })
+      ).emailVerified,
+      true,
+    );
+    assert.equal(await prisma.verification.count(), 0);
+    assert.equal(
+      await prisma.session.count({ where: { userId } }),
+      sessionCountBeforeVerification,
+    );
+
+    const verifiedMeResponse = await fetch(`${baseUrl}/auth/me`, {
+      headers: { Cookie: signInCookie.cookie },
+      signal: AbortSignal.timeout(10_000),
+    });
+    assert.equal(verifiedMeResponse.status, 200);
+    assert.deepEqual(await verifiedMeResponse.json(), {
+      email,
+      emailVerified: true,
+      id: userId,
+      name: 'Runtime Verification User',
+    });
+
+    const replayResponse = await fetch(
+      `${baseUrl}/auth/email-verification/confirm`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: JSON.stringify({ token: confirmationToken }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(replayResponse.status, 200);
+    assert.deepEqual(await replayResponse.json(), { status: 'verified' });
+    assert.equal(replayResponse.headers.get('set-cookie'), null);
+    assert.equal(
+      await prisma.session.count({ where: { userId } }),
+      sessionCountBeforeVerification,
+    );
+
+    const deliveryCountBeforeVerifiedRequest = (
+      (await (
+        await fetchCapturedVerificationEmails(baseUrl, testHttpSecret)
+      ).json()) as { deliveries: unknown[] }
+    ).deliveries.length;
+    const verifiedRequestResponse = await fetch(
+      `${baseUrl}/auth/email-verification/request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: '{}',
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(verifiedRequestResponse.status, 202);
+    assert.deepEqual(await verifiedRequestResponse.json(), {
+      status: 'accepted',
+    });
+    assert.equal(
+      (
+        (await (
+          await fetchCapturedVerificationEmails(baseUrl, testHttpSecret)
+        ).json()) as { deliveries: unknown[] }
+      ).deliveries.length,
+      deliveryCountBeforeVerifiedRequest,
+    );
+    assert.equal(
+      (
+        await fetch(`${baseUrl}/auth/email-verification/request`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Cookie: signInCookie.cookie,
+          },
+          body: '{}',
+          signal: AbortSignal.timeout(10_000),
+        })
+      ).status,
+      202,
+    );
+    const rateLimitedResponse = await fetch(
+      `${baseUrl}/auth/email-verification/request`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: signInCookie.cookie,
+        },
+        body: '{}',
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    assert.equal(rateLimitedResponse.status, 429);
+    assert.deepEqual(await rateLimitedResponse.json(), {
+      statusCode: 429,
+      code: 'EMAIL_VERIFICATION_RATE_LIMITED',
+      message: 'Too many requests.',
     });
 
     const signOutResponse = await fetch(`${baseUrl}/api/auth/sign-out`, {
@@ -356,8 +777,16 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
       signal: AbortSignal.timeout(10_000),
     });
 
-    assert.equal(testOnlyRouteResponse.status, 404);
+    assert.equal(testOnlyRouteResponse.status, 201);
     assert.ok(!childOutput.includes(password), 'API logs exposed the password.');
+    assert.ok(
+      !childOutput.includes(secondPassword),
+      'API logs exposed the second password.',
+    );
+    assert.ok(
+      !childOutput.includes(testHttpSecret),
+      'API logs exposed the test capture secret.',
+    );
     assert.ok(
       !childOutput.includes(signUpCookie.rawToken),
       'API logs exposed the sign-up session token.',
@@ -370,19 +799,33 @@ test('real PostgreSQL authentication lifecycle uses and revokes a server-managed
       !childOutput.includes(signInCookie.cookie),
       'API logs exposed the session cookie.',
     );
+    assert.ok(!childOutput.includes(email), 'API logs exposed the canonical email.');
+    assert.ok(
+      !childOutput.includes('#token='),
+      'API logs exposed a verification confirmation URL.',
+    );
+    for (const verificationToken of verificationTokens) {
+      assert.ok(
+        !childOutput.includes(verificationToken),
+        'API logs exposed a verification token.',
+      );
+    }
   } finally {
     await stopChild(child);
 
+    const createdUserIds = [userId, secondUserId].filter(
+      (id): id is string => typeof id === 'string',
+    );
     await prisma.user.deleteMany({
       where: {
-        email,
+        id: { in: createdUserIds },
       },
     });
 
     assert.equal(
       await prisma.user.count({
         where: {
-          email,
+          id: { in: createdUserIds },
         },
       }),
       0,

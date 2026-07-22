@@ -7,6 +7,9 @@ const validEnv = {
   BETTER_AUTH_SECRET: 'unit-test-secret-value-with-32-chars-minimum',
   BETTER_AUTH_URL: 'http://localhost:3000',
   AUTH_TRUSTED_ORIGINS: 'http://localhost:3000',
+  AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: 'capture',
+  AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL:
+    'http://localhost:3000/verify-email',
   NODE_ENV: 'development',
   DATABASE_URL: 'postgresql://lumora:lumora@127.0.0.1:5432/lumora?schema=public',
 };
@@ -15,6 +18,10 @@ test('AuthService onModuleInit does not throw when PostgreSQL is unavailable', a
   process.env.BETTER_AUTH_SECRET = validEnv.BETTER_AUTH_SECRET;
   process.env.BETTER_AUTH_URL = validEnv.BETTER_AUTH_URL;
   process.env.AUTH_TRUSTED_ORIGINS = validEnv.AUTH_TRUSTED_ORIGINS;
+  process.env.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE =
+    validEnv.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE;
+  process.env.AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL =
+    validEnv.AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL;
   process.env.NODE_ENV = validEnv.NODE_ENV;
   process.env.DATABASE_URL = validEnv.DATABASE_URL;
 

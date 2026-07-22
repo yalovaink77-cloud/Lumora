@@ -1,8 +1,8 @@
 # Verified Email Ownership Architecture Decision
 
-Version: 1.0
+Version: 1.1
 
-Status: Approved — Implementation Pending
+Status: Approved — Implemented and PostgreSQL-Verified
 
 Phase: MVP Authentication Assurance Foundation
 
@@ -576,7 +576,7 @@ match. A token issued before an email change cannot verify the new email.
 
 # 15. Registration Behavior
 
-Future implementation will configure:
+The implementation configures:
 
 - `emailVerification.sendVerificationEmail`,
 - `emailVerification.sendOnSignUp = true`,
@@ -765,7 +765,7 @@ trust stale client-side claims.
 
 # 21. Neutral Authenticated Principal
 
-The future application-facing principal is exactly:
+The application-facing principal is exactly:
 
 ```ts
 type AuthenticatedPrincipal = {
@@ -1186,8 +1186,8 @@ It must not implement:
 
 Sprint 2.8A.2 is architecturally unblocked.
 
-Sprint 2.8B remains blocked until Sprint 2.8A.2 is implemented,
-PostgreSQL-verified, documented, and committed.
+Sprint 2.8B is unblocked by the implemented, PostgreSQL-verified, documented,
+and committed Sprint 2.8A.2 prerequisite.
 
 ---
 
@@ -1310,3 +1310,29 @@ Review this decision when:
 - `apps/api/src/auth/auth.guard.ts`
 - `apps/api/src/auth/auth.types.ts`
 - `packages/database/prisma/schema.prisma`
+
+---
+
+# 36. Sprint 2.8A.2 Implementation Record
+
+Sprint 2.8A.2 implements:
+
+- Better Auth 1.6.23 issuance and authoritative verification,
+- 15-minute HS256 verification tokens with authenticated JOSE subject binding,
+- canonical email validation and the read-only existing-email preflight,
+- provider-neutral delivery with explicit development/test capture,
+  loopback-and-secret-protected test inspection, and production fail-closed
+  behavior,
+- fragment-only confirmation links,
+- authenticated request and explicit POST confirmation facades,
+- external blocking of Better Auth's raw verification and public resend routes,
+- per-User and per-IP facade rate limits,
+- and the exact four-field neutral principal.
+
+`pnpm test:auth:postgres` verifies the real false-to-true
+`User.emailVerified` transition, fresh principal state, replay safety,
+wrong-session rejection, raw-route blocking, unchanged migrations, and all
+existing Family, Pregnancy, Child, and Timeline PostgreSQL runtime suites.
+
+No Prisma schema or migration changed. No production delivery provider, Family
+role, or Family invitation was implemented.

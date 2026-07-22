@@ -312,6 +312,8 @@ test("Timeline runtime enforces contracts, chronology, and isolation", async () 
     env: {
       ...process.env,
       AUTH_TRUSTED_ORIGINS: baseUrl,
+      AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: "capture",
+      AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL: `${baseUrl}/verify-email`,
       BETTER_AUTH_SECRET: randomBytes(48).toString("base64url"),
       BETTER_AUTH_URL: baseUrl,
       DATABASE_URL: testDatabaseUrl,

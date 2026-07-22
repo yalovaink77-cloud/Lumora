@@ -9,12 +9,14 @@ test('AuthController returns only the neutral authenticated principal', () => {
   const principal: AuthenticatedPrincipal = {
     id: 'user-1',
     email: 'user@example.com',
+    emailVerified: false,
     name: 'Test User',
   };
 
   assert.deepEqual(controller.getMe(principal), {
     id: 'user-1',
     email: 'user@example.com',
+    emailVerified: false,
     name: 'Test User',
   });
 });

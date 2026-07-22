@@ -290,8 +290,8 @@ Strategy:
 - **Custom JWT authentication systems are not approved** as Lumora's primary auth foundation.
 
 Verified email ownership is approved in
-`docs/18-verified-email-ownership-architecture-decision.md`; implementation is
-pending. Social login, passkeys, MFA, password-reset delivery, and
+`docs/18-verified-email-ownership-architecture-decision.md` and implemented in
+Sprint 2.8A.2. Social login, passkeys, MFA, password-reset delivery, and
 public-launch rate-limit deployment remain deferred until separately documented.
 
 Implementation (Sprint 2.3B):
@@ -311,7 +311,7 @@ Implementation (Sprint 2.3B):
   raw token fields are removed from JSON response bodies
 - Custom JWT authentication systems are not approved
 
-Approved verified-email architecture (Sprint 2.8A.1):
+Implemented verified-email architecture (Sprint 2.8A.2):
 
 - Better Auth 1.6.23 remains the verification-token issuer and verifier
 - Authenticated Lumora resend and confirmation facades bind verification to the
@@ -322,6 +322,10 @@ Approved verified-email architecture (Sprint 2.8A.1):
 - Production must fail closed without a production-capable delivery adapter
 - Canonical email uses Better Auth's installed syntax validation followed only
   by complete-address lowercase conversion
+- `POST /auth/email-verification/request` and
+  `POST /auth/email-verification/confirm` are the only application verification
+  facades
+- The neutral principal is `{ id, email, emailVerified, name }`
 - Unverified Users retain sign-in and existing private-feature access
 - Security-sensitive consumers may require trusted `emailVerified`
 - The future neutral principal is `id`, canonical `email`, `emailVerified`, and

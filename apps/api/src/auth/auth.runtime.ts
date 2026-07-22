@@ -5,11 +5,13 @@ import type { AuthenticatedPrincipal } from './auth.types';
 export function toAuthenticatedPrincipal(user: {
   id: string;
   email: string;
+  emailVerified: boolean;
   name: string;
 }): AuthenticatedPrincipal {
   return {
     id: user.id,
     email: user.email,
+    emailVerified: user.emailVerified,
     name: user.name,
   };
 }

@@ -67,6 +67,8 @@ before(async () => {
       BETTER_AUTH_SECRET: 'unit-test-secret-value-with-32-chars-minimum',
       BETTER_AUTH_URL: baseUrl,
       AUTH_TRUSTED_ORIGINS: baseUrl,
+      AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: 'capture',
+      AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL: `${baseUrl}/verify-email`,
       NODE_ENV: 'development',
       DATABASE_URL: 'postgresql://lumora:lumora@127.0.0.1:5432/lumora?schema=public',
       LUMORA_ENABLE_TEST_HTTP_ROUTES: 'true',

@@ -213,6 +213,8 @@ test("Family runtime enforces atomic ownership and cross-family isolation", asyn
     env: {
       ...process.env,
       AUTH_TRUSTED_ORIGINS: baseUrl,
+      AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: "capture",
+      AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL: `${baseUrl}/verify-email`,
       BETTER_AUTH_SECRET: authSecret,
       BETTER_AUTH_URL: baseUrl,
       DATABASE_URL: testDatabaseUrl,
