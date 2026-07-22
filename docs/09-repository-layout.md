@@ -94,7 +94,10 @@ Sprint 2.9B.1 established the Expo workspace foundation and Better Auth Expo
 transport unlock. Sprint 2.9B.2 added the Expo Router authenticated session
 shell. Sprint 2.9B.3 presents ADR-019 Safety & Limitations via
 `@lumora/shared` canonical copy, an authenticated-entry disclosure gate, and a
-permanent Safety route from Home.
+permanent Safety route from Home. The minimum mobile Family experience is
+defined in
+`docs/21-minimum-mobile-family-experience-architecture-decision.md`
+(implementation: Sprint 2.10B).
 
 ---
 

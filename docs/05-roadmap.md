@@ -54,6 +54,9 @@
   two approved authenticated surfaces in `apps/mobile` (Sprint 2.9B.3;
   architecture in
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`).
+- The minimum mobile Family list/create/detail experience is architected in
+  `docs/21-minimum-mobile-family-experience-architecture-decision.md` and
+  implemented in Sprint 2.10B before Pregnancy/Child/Timeline UI.
 
 ## 4. Beta Phase
 

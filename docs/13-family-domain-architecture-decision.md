@@ -581,6 +581,8 @@ Review this decision when:
 - `docs/11-founder-independence-and-long-term-continuity.md`
 - `docs/12-authentication-architecture-decision.md`
 - `docs/17-family-roles-and-membership-entry-architecture-decision.md`
+- `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
+- `docs/21-minimum-mobile-family-experience-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
 
 ---
@@ -588,6 +590,10 @@ Review this decision when:
 # 25. Sprint 2.4B Implementation Record
 
 Status: Implemented
+
+Mobile Family presentation for these APIs is architected in
+`docs/21-minimum-mobile-family-experience-architecture-decision.md` and is not
+implemented by Sprint 2.4B.
 
 The minimum vertical is implemented with these boundaries:
 

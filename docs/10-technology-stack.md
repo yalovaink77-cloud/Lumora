@@ -273,8 +273,8 @@ Sprint 2.9B.3 disclosure presentation (implemented):
 - `/disclosure` authenticated-entry gate (in-memory continuation only)
 - `/(app)/safety` permanent Safety & Limitations route from Home
 
-Next gate: product roadmap work beyond the minimum authenticated shell
-sequence (Family UI and later domains remain deferred)
+Next gate: Sprint 2.10B minimum mobile Family list/create/detail
+(`docs/21-minimum-mobile-family-experience-architecture-decision.md`)
 
 ---
 

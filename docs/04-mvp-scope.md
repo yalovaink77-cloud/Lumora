@@ -14,12 +14,13 @@ Deliver a small, usable, private product that allows a mother to organize the es
 - View timeline chronologically
 - Basic family member roles
 - Privacy-aware access control
-- Medical safety and AI disclaimers (canonical meaning approved in
+- Medical safety and AI disclaimers (canonical meaning in
   `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`;
-  mobile shell architecture approved in
-  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`;
-  user-facing presentation remains pending authenticated mobile shell
-  implementation)
+  presented on the authenticated mobile shell per
+  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`)
+- Minimum mobile Family list/create/detail architecture approved in
+  `docs/21-minimum-mobile-family-experience-architecture-decision.md`
+  (UI implementation deferred to Sprint 2.10B)
 
 ## 3. Excluded Features
 

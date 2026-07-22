@@ -64,6 +64,7 @@ Every new contributor should read the documentation in the following order.
 19. 18-verified-email-ownership-architecture-decision.md
 20. 19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md
 21. 20-minimum-authenticated-mobile-shell-architecture-decision.md
+22. 21-minimum-mobile-family-experience-architecture-decision.md
 
 Do not skip this order.
 

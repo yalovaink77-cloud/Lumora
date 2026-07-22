@@ -609,8 +609,9 @@ Approved sequence:
 ## 15.1 Exact next implementation sprint
 
 Sprint 2.9B (authenticated Expo shell + ADR-019 disclosure presentation) is
-complete through §15.4. Further product work is outside this ADR’s shell
-sequence and must follow the product roadmap / deferred-decisions process.
+complete through §15.4. The next client product architecture for Family UI is
+`docs/21-minimum-mobile-family-experience-architecture-decision.md`
+(implementation: Sprint 2.10B).
 
 ## 15.2 Sprint 2.9B.1 Implementation Record
 
