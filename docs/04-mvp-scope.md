@@ -22,9 +22,10 @@ Deliver a small, usable, private product that allows a mother to organize the es
   `apps/mobile` per
   `docs/21-minimum-mobile-family-experience-architecture-decision.md`
   (Sprint 2.10B)
-- Minimum mobile Pregnancy list/create/detail architecture approved in
+- Minimum mobile Pregnancy list/create/detail experience implemented in
+  `apps/mobile` per
   `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
-  (UI implementation deferred to Sprint 2.11B)
+  (Sprint 2.11B)
 
 ## 3. Excluded Features
 

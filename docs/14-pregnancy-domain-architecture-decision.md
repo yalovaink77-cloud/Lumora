@@ -798,7 +798,6 @@ deploys all migrations to disposable PostgreSQL 16, runs the authentication,
 Family, and Pregnancy runtime suites, and removes the container.
 
 Both `OWNER` and `MEMBER` retain create/list/direct-get access under ADR-017.
-No Pregnancy mobile UI is implemented in Sprint 2.5B; the minimum mobile
-Pregnancy client architecture is documented in
-`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
-(implementation: Sprint 2.11B).
+The minimum mobile Pregnancy list/create/detail experience is implemented in
+Sprint 2.11B per
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.

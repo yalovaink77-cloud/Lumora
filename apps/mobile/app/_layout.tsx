@@ -5,6 +5,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthSessionProvider } from "../src/auth/auth-session-context";
 import { FamilyProvider } from "../src/family/FamilyProvider";
+import { PregnancyProvider } from "../src/pregnancy/PregnancyProvider";
 
 export default function RootLayout() {
   return (
@@ -12,8 +13,10 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <AuthSessionProvider>
           <FamilyProvider>
-            <StatusBar style="auto" />
-            <Stack screenOptions={{ headerShown: false }} />
+            <PregnancyProvider>
+              <StatusBar style="auto" />
+              <Stack screenOptions={{ headerShown: false }} />
+            </PregnancyProvider>
           </FamilyProvider>
         </AuthSessionProvider>
       </SafeAreaProvider>

@@ -612,9 +612,9 @@ Sprint 2.9B (authenticated Expo shell + ADR-019 disclosure presentation) is
 complete through §15.4. The minimum mobile Family list/create/detail experience
 is implemented in Sprint 2.10B per
 `docs/21-minimum-mobile-family-experience-architecture-decision.md`. The
-minimum mobile Pregnancy experience architecture is documented in
-`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
-(implementation: Sprint 2.11B).
+minimum mobile Pregnancy list/create/detail experience is implemented in
+Sprint 2.11B per
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
 
 ## 15.2 Sprint 2.9B.1 Implementation Record
 

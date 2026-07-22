@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Client Not Implemented)
+Status: Approved — Implemented (Sprint 2.11B)
 
 Phase: MVP Client Pregnancy Foundation
 
@@ -763,3 +763,67 @@ Sprint 2.11A documents:
 
 No application code, dependencies, lockfiles, schema, migrations, or tests are
 changed by this sprint.
+
+---
+
+# 20. Sprint 2.11B Completion Record
+
+Sprint 2.11B implements the minimum Family-scoped Pregnancy experience in
+`apps/mobile` against existing Pregnancy API contracts only.
+
+## 20.1 Routes and Family detail entry
+
+- `/(app)/families/[familyId]/pregnancies` — Family-scoped list, pull-to-refresh,
+  empty state, create entry
+- `/(app)/families/[familyId]/pregnancies/create` — `displayName` only, Unicode
+  code-point validation mirroring the server
+- `/(app)/families/[familyId]/pregnancies/[pregnancyId]` — direct-get detail;
+  generic unavailable UI for `PREGNANCY_NOT_FOUND`
+- Family detail provides an accessible Pregnancies entry
+- Routes remain inside `(app)` and inherit authentication + disclosure guards
+
+## 20.2 Pregnancy API client behavior
+
+- Cookie session via Better Auth Expo `getCookie()` + validated API base URL
+- Nested Family/Pregnancy paths; path-encoded identifiers
+- Exact DTO mapping with response `familyId` consistency checks
+- `AbortController` + 15s bounded timeout
+- Distinguishes unauthorized, `FAMILY_NOT_FOUND`, `PREGNANCY_NOT_FOUND`,
+  validation, network, server, malformed, and aborted results
+- Unauthorized clears Pregnancy process-memory state and uses the central
+  session sign-out boundary
+- No sensitive logging; no Family/Pregnancy HTTP helper SDK extraction was
+  required
+
+## 20.3 Process-memory Family-scoped state
+
+- Server remains authoritative; no AsyncStorage/SecureStore Pregnancy persistence
+- State scoped by `familyId`; cleared on sign-out, principal change, and Family
+  context change
+- Stale in-flight responses ignored; create refreshes list without optimistic
+  insert
+
+## 20.4 Medical-safety presentation
+
+- Organizational record copy only; `displayName` remains a presentation label
+- No gestational age, trimester, due date, risk, diagnosis, Child, or Timeline
+  controls
+
+## 20.5 Verification performed
+
+- Mobile lint, type-check, tests, Expo shell verification, and workspace
+  verification suite for this sprint
+- Android/iOS static `expo export` validation where applicable
+- Prisma schema/migrations and backend Pregnancy API contracts unchanged
+
+## 20.6 Device / emulator smoke
+
+No safe existing Android emulator, iOS simulator, or connected device was
+available for interactive smoke in this environment. Interactive smoke is
+therefore not claimed. Static Android/iOS bundle validation remains the
+truthful substitute.
+
+## 20.7 Next truthful UI checkpoint
+
+Minimum Child mobile list/create/detail architecture (documentation-first),
+only after ADR-aligned Pregnancy UI is complete — do not begin that sprint here.

@@ -81,9 +81,10 @@ test("Family list/create/detail screens cover required UX without excluded UI", 
     detail,
     /Invite member|member directory|onRename|onDelete/i,
   );
+  assert.match(detail, /Open Pregnancies/);
   assert.doesNotMatch(
     detail,
-    /href=\{?`?\/\(app\)\/pregnanc|href=\{?`?\/\(app\)\/timeline|href=\{?`?\/\(app\)\/child/i,
+    /href=\{?`?\/\(app\)\/timeline|href=\{?`?\/\(app\)\/child|Open Timeline|Open Child/i,
   );
 });
 

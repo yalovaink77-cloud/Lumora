@@ -31,6 +31,9 @@ const requiredRoutes = [
   "app/(app)/families/index.tsx",
   "app/(app)/families/create.tsx",
   "app/(app)/families/[familyId].tsx",
+  "app/(app)/families/[familyId]/pregnancies/index.tsx",
+  "app/(app)/families/[familyId]/pregnancies/create.tsx",
+  "app/(app)/families/[familyId]/pregnancies/[pregnancyId].tsx",
 ];
 
 for (const route of requiredRoutes) {

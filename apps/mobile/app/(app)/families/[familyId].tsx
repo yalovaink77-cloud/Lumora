@@ -1,4 +1,4 @@
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -104,9 +104,21 @@ export default function FamilyDetailScreen() {
               Updated {formatFamilyDate(family.detail.updatedAt)}
             </Text>
             <Text style={shellStyles.subtitle}>
-              Pregnancy, Child, Timeline, and invitation features are not
-              available on this screen.
+              Child, Timeline, and invitation features are not available on this
+              screen.
             </Text>
+            <Link
+              href={`/(app)/families/${family.detail.id}/pregnancies`}
+              asChild
+            >
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Open Pregnancies"
+                style={shellStyles.primaryButton}
+              >
+                <Text style={shellStyles.primaryButtonText}>Pregnancies</Text>
+              </Pressable>
+            </Link>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Back to Families"

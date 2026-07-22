@@ -635,6 +635,5 @@ passed without native prebuild or `android/`/`ios/` directories.
 
 ## 19.6 Next truthful UI checkpoint
 
-Minimum Pregnancy mobile list/create/detail architecture is documented in
-`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
-(Sprint 2.11A). Implementation follows in Sprint 2.11B.
+Minimum Pregnancy mobile list/create/detail is implemented in Sprint 2.11B per
+`docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
