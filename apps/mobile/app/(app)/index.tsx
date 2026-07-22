@@ -50,8 +50,7 @@ export default function HomeScreen() {
       ) : null}
 
       <Text style={shellStyles.bodyText}>
-        Family, Pregnancy, Child, and Timeline features are not part of this
-        shell.
+        Pregnancy, Child, and Timeline features are not part of this shell.
       </Text>
 
       {error ? (
@@ -60,13 +59,23 @@ export default function HomeScreen() {
         </Text>
       ) : null}
 
+      <Link href="/(app)/families" asChild>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel="Open Families"
+          style={shellStyles.primaryButton}
+        >
+          <Text style={shellStyles.primaryButtonText}>Families</Text>
+        </Pressable>
+      </Link>
+
       <Link href="/(app)/safety" asChild>
         <Pressable
           accessibilityRole="link"
           accessibilityLabel="Open Safety and Limitations"
-          style={shellStyles.primaryButton}
+          style={shellStyles.secondaryButton}
         >
-          <Text style={shellStyles.primaryButtonText}>
+          <Text style={shellStyles.secondaryButtonText}>
             Safety & Limitations
           </Text>
         </Pressable>

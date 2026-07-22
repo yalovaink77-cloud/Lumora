@@ -28,6 +28,9 @@ const requiredRoutes = [
   "app/(app)/_layout.tsx",
   "app/(app)/index.tsx",
   "app/(app)/safety.tsx",
+  "app/(app)/families/index.tsx",
+  "app/(app)/families/create.tsx",
+  "app/(app)/families/[familyId].tsx",
 ];
 
 for (const route of requiredRoutes) {

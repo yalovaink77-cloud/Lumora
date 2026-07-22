@@ -109,4 +109,21 @@ export const shellStyles = StyleSheet.create({
     backgroundColor: "#ffffff",
     padding: 24,
   },
+  listItem: {
+    minHeight: 48,
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e5e5",
+  },
+  listItemTitle: {
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#111111",
+    marginBottom: 4,
+  },
+  listItemMeta: {
+    fontSize: 13,
+    color: "#666666",
+  },
 });

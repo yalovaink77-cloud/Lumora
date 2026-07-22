@@ -273,8 +273,16 @@ Sprint 2.9B.3 disclosure presentation (implemented):
 - `/disclosure` authenticated-entry gate (in-memory continuation only)
 - `/(app)/safety` permanent Safety & Limitations route from Home
 
-Next gate: Sprint 2.10B minimum mobile Family list/create/detail
-(`docs/21-minimum-mobile-family-experience-architecture-decision.md`)
+Sprint 2.10B minimum mobile Family list/create/detail (implemented):
+
+- Routes: `/(app)/families`, `/(app)/families/create`,
+  `/(app)/families/[familyId]`
+- Cookie-session Family API client with DTO validation, timeout, and abort
+- Process-memory Family state cleared on sign-out/principal change
+- Home Families entry; Pregnancy/Child/Timeline UI still deferred
+
+Next gate: minimum Pregnancy mobile experience architecture (documentation-
+first), after Family UI foundation
 
 ---
 
@@ -545,6 +553,7 @@ Current verified application state:
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
 - Sprint 2.9B.1–2.9B.3 authenticated shell + disclosure presentation is
   implemented
+- Sprint 2.10B minimum mobile Family list/create/detail is implemented
 - Canonical safety copy is owned by `@lumora/shared`
 
 ---

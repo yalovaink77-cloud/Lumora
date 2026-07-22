@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Client Not Implemented)
+Status: Approved — Implemented (Sprint 2.10B)
 
 Phase: MVP Client Family Foundation
 
@@ -575,3 +575,65 @@ Sprint 2.10A documents:
 
 No application code, dependencies, lockfiles, schema, migrations, or tests are
 changed by this sprint.
+
+---
+
+# 19. Sprint 2.10B Completion Record
+
+Sprint 2.10B implements the minimum mobile Family experience in `apps/mobile`
+against existing Family API contracts only.
+
+## 19.1 Routes and Home entry
+
+- `/(app)/families` — membership-scoped list, pull-to-refresh, empty state,
+  create entry
+- `/(app)/families/create` — `displayName` only, client validation mirroring
+  server Unicode code-point rules
+- `/(app)/families/[familyId]` — direct-get detail; generic unavailable UI for
+  `FAMILY_NOT_FOUND`
+- Home provides an accessible Families entry; Safety & Limitations and sign-out
+  remain available
+- Family routes remain inside `(app)` and inherit authentication + disclosure
+  continuation guards
+
+## 19.2 Family API client behavior
+
+- Cookie session via Better Auth Expo `getCookie()` + validated
+  `EXPO_PUBLIC_LUMORA_API_BASE_URL`
+- `credentials: "omit"`; no custom bearer token auth
+- Exact DTO mapping at the client boundary; malformed responses rejected
+- `AbortController` + 15s bounded timeout
+- Distinguishes unauthorized, `FAMILY_NOT_FOUND`, validation, network, server,
+  malformed, and aborted results
+- Unauthorized results clear process-memory Family state and route through the
+  central session sign-out boundary
+- No sensitive request/response logging; `familyId` path-encoded; no Family data
+  in query strings
+
+## 19.3 Process-memory Family state
+
+- Server remains authoritative; no AsyncStorage/SecureStore/domain cache for
+  Family data
+- Clears on sign-out and principal change; stale in-flight responses ignored
+- Create refreshes list after success (no optimistic insert); direct-get may
+  upsert matching list/detail memory
+
+## 19.4 Verification performed
+
+- Mobile lint, type-check, tests, Expo shell verification, and workspace
+  verification suite for this sprint
+- Android/iOS static bundle/export validation attempted as part of Expo export
+  checks where applicable
+- Prisma schema/migrations and backend Family API contracts unchanged
+
+## 19.5 Device / emulator smoke
+
+No safe existing Android emulator, iOS simulator, or connected device was
+available for interactive smoke in this environment. Interactive smoke is
+therefore not claimed. Android and iOS static `expo export` bundle validation
+passed without native prebuild or `android/`/`ios/` directories.
+
+## 19.6 Next truthful UI checkpoint
+
+Minimum Pregnancy mobile list/create/detail architecture (documentation-first),
+only after ADR-aligned Family UI is complete — do not begin that sprint here.

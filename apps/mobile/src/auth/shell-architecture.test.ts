@@ -21,12 +21,21 @@ function listRouteFiles(dir: string): string[] {
   return files;
 }
 
-test("Expo Router exposes disclosure and Safety routes without Family screens", () => {
+test("Expo Router exposes disclosure, Safety, and approved Family routes", () => {
   assert.equal(existsSync(join(appRoot, "app/(auth)/sign-in.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/(auth)/register.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/disclosure.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/(app)/index.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/(app)/safety.tsx")), true);
+  assert.equal(existsSync(join(appRoot, "app/(app)/families/index.tsx")), true);
+  assert.equal(
+    existsSync(join(appRoot, "app/(app)/families/create.tsx")),
+    true,
+  );
+  assert.equal(
+    existsSync(join(appRoot, "app/(app)/families/[familyId].tsx")),
+    true,
+  );
 
   const routeFiles = listRouteFiles(join(appRoot, "app"));
   const routeNames = routeFiles.map((file) => file.slice(appRoot.length));
@@ -35,14 +44,17 @@ test("Expo Router exposes disclosure and Safety routes without Family screens", 
     .join("\n");
 
   assert.equal(
-    routeNames.some((name) =>
-      /family|pregnancy|child|timeline|invitation/i.test(name),
-    ),
+    routeNames.some((name) => /pregnancy|timeline|invitation/i.test(name)),
     false,
   );
-  assert.doesNotMatch(joined, /\bOWNER\b|\bMEMBER\b|familyId/);
+  assert.equal(
+    routeNames.some((name) => /\/families\//.test(name)),
+    true,
+  );
+  assert.doesNotMatch(joined, /\bOWNER\b|\bMEMBER\b/);
   assert.doesNotMatch(joined, /AsyncStorage|jsonwebtoken|Bearer /);
-  assert.doesNotMatch(joined, /\/families|\/pregnancies|\/children|\/timeline/);
+  assert.doesNotMatch(joined, /\/pregnancies|\/children|\/timeline/);
+  assert.match(joined, /\/\(app\)\/families/);
   assert.match(
     readFileSync(join(appRoot, "src/safety/SafetyDisclosureBody.tsx"), "utf8"),
     /@lumora\/shared|LUMORA_MVP_SAFETY/,

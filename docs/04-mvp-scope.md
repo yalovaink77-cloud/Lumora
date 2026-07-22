@@ -18,9 +18,10 @@ Deliver a small, usable, private product that allows a mother to organize the es
   `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`;
   presented on the authenticated mobile shell per
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`)
-- Minimum mobile Family list/create/detail architecture approved in
+- Minimum mobile Family list/create/detail experience implemented in
+  `apps/mobile` per
   `docs/21-minimum-mobile-family-experience-architecture-decision.md`
-  (UI implementation deferred to Sprint 2.10B)
+  (Sprint 2.10B)
 
 ## 3. Excluded Features
 

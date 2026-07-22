@@ -609,9 +609,9 @@ Approved sequence:
 ## 15.1 Exact next implementation sprint
 
 Sprint 2.9B (authenticated Expo shell + ADR-019 disclosure presentation) is
-complete through §15.4. The next client product architecture for Family UI is
-`docs/21-minimum-mobile-family-experience-architecture-decision.md`
-(implementation: Sprint 2.10B).
+complete through §15.4. The minimum mobile Family list/create/detail experience
+is implemented in Sprint 2.10B per
+`docs/21-minimum-mobile-family-experience-architecture-decision.md`.
 
 ## 15.2 Sprint 2.9B.1 Implementation Record
 
