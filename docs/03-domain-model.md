@@ -88,7 +88,7 @@ This document describes the core business domains of Lumora at an architectural 
 - Provides continuity across **Pregnancy** and **Child** stages.
 
 **Relationships:**
-- Associated with a **Family**, a **Child**, and/or a **Pregnancy**.
+- Associated with a **Family** and exactly one **Child** or **Pregnancy**.
 - May reference **Media** items as part of an event.
 - May reference **Health** entries when an event has medical relevance.
 
