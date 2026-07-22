@@ -1,12 +1,14 @@
 # Child Domain Architecture Decision
 
-Version: 1.3
+Version: 1.4
 
-Status: Approved — Sprint 2.6B Implemented
+Status: Approved — Sprint 2.6B Implemented; Sprint 2.6D Ready
 
 Phase: MVP Domain Foundation
 
 Decision date: 2026-07-21
+
+Last amended: 2026-07-22
 
 ---
 
@@ -28,6 +30,10 @@ points, and keeps mutation endpoints outside Sprint 2.6B. The resulting profile
 is meaningfully recognizable without introducing legal identity, birth,
 guardian, medical, demographic, or cross-domain data. Sprint 2.6B is ready
 subject to the implementation gate in section 24.
+
+Version 1.4 approves the smallest safe `displayName` mutation contract without
+changing the Child entity, privacy boundary, or deferred domains. Sections 29
+through 37 define the future implementation boundary.
 
 ---
 
@@ -79,8 +85,8 @@ The approved documentation does not establish:
 - a persisted Pregnancy relationship,
 - which Family role may act as a guardian,
 - how adult ownership begins or is proven,
-- or the authority and API behavior for update, rename, move, archive, or
-  deletion operations.
+- or the authority and API behavior for Child mutation other than the approved
+  `displayName` contract, move, archive, or deletion operations.
 
 Common conventions in child applications are not evidence that any of these
 fields or behaviors are approved.
@@ -167,12 +173,13 @@ Field classification:
   approved operation changes an approved mutable field.
 - `displayName` is required at creation, user-provided, normalized and validated
   according to section 6, and returned in every minimum Child representation.
-  It is mutable, but no update or rename operation is approved for Sprint 2.6B.
+  It is mutable through the contract approved in sections 29 through 37. No
+  mutation endpoint was part of Sprint 2.6B.
 
 No optional product field is approved.
 
 `displayName` is the only mutable product field. Its mutation authority,
-validation contract, and API behavior remain deferred.
+validation contract, and API behavior are defined in sections 29 through 37.
 
 The technical timestamps are persistence history. They are not birth dates, age
 evidence, lifecycle markers, or medical facts.
@@ -216,9 +223,9 @@ not:
 - a medical, demographic, or lifecycle fact,
 - or an external identifier.
 
-No update or rename endpoint is approved for Sprint 2.6B. Mutation authority and
-API behavior remain deferred and must preserve the Child's lifelong record
-continuity and eventual adult ownership.
+No update or rename endpoint was approved for Sprint 2.6B. Sections 29 through
+37 approve one future `displayName` mutation endpoint while preserving the
+Child's lifelong record continuity and eventual adult ownership.
 
 ---
 
@@ -288,13 +295,14 @@ Every future Child operation requires:
    to that Family.
 
 During the current one-role Family foundation, every persisted membership is
-explicitly `OWNER`. Membership is sufficient for the initial create-and-read
-vertical only. This does not:
+explicitly `OWNER`. Persisted membership is sufficient for the approved Child
+create, read, and `displayName` mutation operations. This does not:
 
 - establish that `OWNER` is a parent or guardian,
 - prove a legal relationship to the Child,
 - define permissions for future roles,
-- or authorize future update, deletion, export, or ownership-transfer behavior.
+- or authorize any other update, deletion, export, or ownership-transfer
+  behavior.
 
 The implementation must:
 
@@ -368,8 +376,9 @@ Every minimum Child response contains only:
 The returned `displayName` is the trimmed persisted value. Successful creation,
 list, and direct-get use the same minimum Child representation.
 
-No global Child list, update, rename, move, archive, deletion, transition, or
-ownership-transfer endpoint is approved.
+No global Child list, move, archive, deletion, transition, or
+ownership-transfer endpoint is approved. The future `displayName` mutation
+contract is defined separately in sections 29 through 37.
 
 ---
 
@@ -410,7 +419,7 @@ Sprint 2.6B may create `@lumora/child`, which will own:
 - approved Child domain concepts,
 - Child input validation,
 - Family-scoped Child repository contracts,
-- creation and read application behavior,
+- creation, read, and approved `displayName` mutation application behavior,
 - and behavior independent of NestJS, Better Auth, Prisma, and
   `@lumora/database`.
 
@@ -478,8 +487,9 @@ The continuity documentation approves the following philosophy:
 This philosophy does not approve implementation mechanics.
 
 The current Family `OWNER` role is not proof of parenthood, guardianship, legal
-authority, or future adult ownership. Creating or reading a Child under an
-`OWNER` membership must not create a persisted guardian relationship.
+authority, or future adult ownership. Creating, reading, or mutating a Child
+`displayName` under an `OWNER` membership must not create a persisted guardian
+relationship.
 
 Sprint 2.6B must not introduce:
 
@@ -555,7 +565,8 @@ records owned by different Families.
 
 # 17. Validation Requirements
 
-The following validation rules are approved:
+The following validation rules are approved for creation and `displayName`
+mutation:
 
 - request bodies must reject unknown fields,
 - `displayName` must be present,
@@ -720,7 +731,8 @@ The following are outside this decision and Sprint 2.6B:
 - appointments, reminders, or notifications,
 - Media or file attachments,
 - AI features,
-- Child update, rename, move, archive, or deletion endpoints,
+- Child mutation endpoints other than the approved `displayName` mutation,
+- Child move, archive, or deletion endpoints,
 - export implementation,
 - retention implementation,
 - membership management or new Family roles,
@@ -740,21 +752,21 @@ The following require narrow approved decisions before their respective
 implementation:
 
 1. Whether any birth-related date belongs in the MVP and its exact semantics.
-2. `displayName` update or rename behavior and who may perform it.
-3. Child lifecycle or status vocabulary, if required.
-4. Guardian, parent, caregiver, consent, and custody relationships.
-5. Permissions for future FamilyMembership roles.
-6. Guardian-to-adult ownership transition, legal thresholds, authority, and
+2. Child lifecycle or status vocabulary, if required.
+3. Guardian, parent, caregiver, consent, and custody relationships.
+4. Permissions for future FamilyMembership roles.
+5. Guardian-to-adult ownership transition, legal thresholds, authority, and
    account association.
-7. Pregnancy-to-Child relationship, cardinality, authority, and lifecycle
+6. Pregnancy-to-Child relationship, cardinality, authority, and lifecycle
    effects.
-8. Child deletion, Family deletion effects, retention, and relationship cleanup.
-9. Export format, completeness, guardian authority, adult authority, and legal
+7. Child deletion, Family deletion effects, retention, and relationship cleanup.
+8. Export format, completeness, guardian authority, adult authority, and legal
    retention.
-10. Timeline, Health, and Media relationships.
+9. Timeline, Health, and Media relationships.
 
-None of these decisions blocks the approved minimum create-and-read vertical.
-Their associated behavior must stay excluded from Sprint 2.6B.
+None of these decisions blocks the approved minimum create-and-read vertical or
+the `displayName` mutation contract in sections 29 through 37. Their associated
+behavior must stay excluded until separately approved.
 
 ---
 
@@ -841,7 +853,8 @@ The eventual implementation must:
 
 Review this decision when:
 
-- `displayName` update, rename, replacement, or semantic expansion is proposed,
+- `displayName` replacement, semantic expansion, or a second mutation contract
+  is proposed,
 - any name, date, age, demographic, or lifecycle field is proposed,
 - Child update or deletion behavior is proposed,
 - guardian or caregiver authorization is designed,
@@ -918,3 +931,365 @@ scope. The repeatable `pnpm test:child:postgres` command builds the repository,
 validates and deploys all migrations to disposable PostgreSQL 16, runs the
 authentication, Family, Pregnancy, and Child runtime suites, and removes the
 container.
+
+---
+
+# 29. Child `displayName` Mutation Decision
+
+Child `displayName` mutation is approved for one future implementation sprint.
+
+The mutation changes only the normalized `displayName` and system-managed
+`updatedAt` of one existing Child. It must not:
+
+- change `id`, `familyId`, or `createdAt`,
+- add another Child field,
+- move the Child to another Family,
+- change the presentation-label semantics of `displayName`,
+- create a guardian, ownership, legal-identity, or authentication relationship,
+- or trigger behavior in Pregnancy or another domain.
+
+The approved endpoint is:
+
+`PATCH /families/:familyId/children/:childId`
+
+`PATCH` is used because the operation changes one approved mutable field rather
+than replacing the Child resource. No general-purpose Child update endpoint is
+approved.
+
+---
+
+# 30. HTTP Request, Response, and Error Contract
+
+The request body must contain exactly:
+
+```json
+{
+  "displayName": "..."
+}
+```
+
+`displayName` is required even though the HTTP method is `PATCH`. An empty body
+is invalid. The body must strictly reject every unknown field, including:
+
+- `id`,
+- `familyId`,
+- `childId`,
+- `createdAt`,
+- `updatedAt`,
+- `userId`,
+- membership or role claims,
+- guardian, parent, custody, or ownership claims,
+- legal or preferred names,
+- birth, age, demographic, lifecycle, or medical data,
+- Pregnancy linkage,
+- and all other fields.
+
+A successful mutation returns HTTP 200 with the same minimum Child
+representation used by create and direct get:
+
+```json
+{
+  "id": "...",
+  "familyId": "...",
+  "displayName": "...",
+  "createdAt": "...",
+  "updatedAt": "..."
+}
+```
+
+The response returns the normalized persisted `displayName`. It contains no
+wrapper object and no authentication, membership, User, role, guardian,
+ownership, account, cookie, token, session, legal, medical, or unrelated data.
+
+Validation failures return HTTP 400 using the established Child validation
+codes:
+
+- `DISPLAY_NAME_REQUIRED`,
+- `DISPLAY_NAME_INVALID`,
+- `DISPLAY_NAME_TOO_LONG`,
+- or `UNKNOWN_FIELD`.
+
+Validation errors must use a deterministic generic message and must not echo the
+submitted value or request body.
+
+Unauthenticated requests return HTTP 401 through the existing authentication
+guard.
+
+Every unavailable scoped target returns the same HTTP 404 response:
+
+```json
+{
+  "statusCode": 404,
+  "code": "CHILD_NOT_FOUND",
+  "message": "Child not found."
+}
+```
+
+This one response applies when:
+
+- the Family does not exist,
+- the Family exists but is inaccessible to the caller,
+- the Child does not exist,
+- the Child exists but is inaccessible to the caller,
+- the Child belongs to a different Family than `familyId`,
+- or the Family/Child combination does not exist.
+
+The mutation endpoint must not return `FAMILY_NOT_FOUND`, HTTP 403, or another
+distinguishing response for these cases.
+
+---
+
+# 31. Validation and Normalization
+
+Mutation uses the same `displayName` value rules as creation:
+
+- the input is required,
+- the input must be a string,
+- leading and trailing whitespace is trimmed before validation and persistence,
+- the trimmed value must contain between 1 and 80 Unicode code points,
+- exactly 80 Unicode code points are accepted,
+- more than 80 Unicode code points are rejected,
+- valid Unicode is accepted and preserved after trimming,
+- duplicate values remain allowed within one Family,
+- no global or Family-scoped uniqueness check is performed,
+- no default is applied,
+- and the normalized value is the only client-provided value persisted.
+
+The operation must not normalize case, collapse internal whitespace,
+transliterate text, infer a legal or preferred name, or derive a value from
+authentication User data.
+
+---
+
+# 32. Authentication and Authorization
+
+The mutation requires:
+
+1. an authenticated neutral principal,
+2. the explicit path `familyId`,
+3. the explicit path `childId`,
+4. a persisted FamilyMembership connecting the principal's User identifier to
+   the path Family,
+5. and a Child whose persisted `id` and `familyId` match both path identifiers.
+
+The User identifier comes only from the authenticated principal. The operation
+must never accept or trust client-supplied User, membership, role, guardian,
+custody, or ownership claims.
+
+During the current one-role Family foundation, persisted membership is
+sufficient to mutate `displayName`. This authorizes only the presentation-label
+mutation defined here. It does not establish parenthood, guardianship, custody,
+ownership, or authority for any deferred Child behavior.
+
+Future FamilyMembership roles must not inherit this permission automatically.
+Their mutation permissions require a separate role decision.
+
+A Family identifier or Child identifier alone never grants access.
+
+---
+
+# 33. Persistence, Transaction, and Concurrency
+
+Authorization lookup and mutation must be one atomic
+FamilyMembership-scoped persistence operation. A check-then-update gap is not
+allowed.
+
+An implementation may use:
+
+- one database statement that scopes the update by authenticated User,
+  `familyId`, `childId`, and persisted FamilyMembership,
+- or one serializable transaction containing the membership-scoped target
+  lookup and update.
+
+If multiple statements are required, they must execute in one serializable
+transaction so membership removal, Family changes, or concurrent writes cannot
+turn a previously checked authorization result into an unsafe update.
+
+No schema change, new index, migration, history table, version column, or
+updated-by relationship is required or approved.
+
+No optimistic-concurrency precondition, ETag, `If-Match` header, revision
+number, or client-supplied `updatedAt` is approved. Concurrent valid updates use
+last-successful-commit-wins semantics. Each successful response must represent
+the value committed by that request. Transaction serialization conflicts may be
+retried only through a bounded infrastructure policy and must never be converted
+into a false 404 or validation result.
+
+If bounded retries are exhausted, the API returns a generic HTTP 500
+infrastructure failure without Child data or submitted values. A new HTTP 409
+contract is not approved.
+
+The mutation must not create a Child when the scoped target is absent. Upsert is
+not approved.
+
+---
+
+# 34. `updatedAt` Behavior
+
+`updatedAt` remains system-managed and cannot be supplied by the client.
+
+Every successfully persisted `displayName` mutation refreshes `updatedAt` to the
+database write time and returns that persisted value. `id`, `familyId`,
+`createdAt`, and all other persistence values remain unchanged.
+
+A request whose normalized `displayName` equals the current persisted value is
+valid. It is treated as a successful mutation, refreshes `updatedAt`, and
+returns HTTP 200. This avoids adding comparison, conditional-request, or
+no-operation semantics to the minimum contract.
+
+Failed authentication, validation, authorization, missing-resource,
+transaction, or persistence outcomes must not change `displayName` or
+`updatedAt`.
+
+`updatedAt` is persistence history only. It is not a birth, age, maturity,
+lifecycle, guardian, ownership, medical, or identity timestamp.
+
+---
+
+# 35. Privacy, Logging, and Sensitive Output
+
+`displayName` remains heightened-privacy Child data before, during, and after
+mutation.
+
+The future implementation must:
+
+- keep request and response bodies out of routine application logs,
+- never log the submitted or persisted `displayName`,
+- avoid logging Family or Child identifiers except where a separately approved
+  secure operational policy requires them,
+- use request correlation metadata that does not contain Child data,
+- never place Child data in authentication sessions, cookies, tokens, cache
+  keys, analytics events, or authentication persistence,
+- never expose credentials, password data, account records, cookies, raw
+  session tokens, or Better Auth internals,
+- never echo rejected input in errors,
+- preserve the deterministic 404 boundary across inaccessible and unknown
+  targets,
+- and return only the minimum Child representation on success.
+
+The endpoint must not emit an audit event until audit-event contents, access,
+retention, and privacy handling are separately approved. This does not prevent
+minimal infrastructure metrics that contain no Child data or Family/Child
+identifiers.
+
+---
+
+# 36. Package, API, Persistence, and Test Responsibilities
+
+## `@lumora/child`
+
+The Child package will own:
+
+- the strict `displayName` mutation input contract,
+- normalization and validation,
+- infrastructure-independent mutation application behavior,
+- and the FamilyMembership-scoped repository mutation contract.
+
+It must remain independent of NestJS, Better Auth, Prisma, and
+`@lumora/database`.
+
+## `@lumora/database`
+
+The database package will own:
+
+- the atomic membership-scoped mutation implementation,
+- transaction and concurrency behavior,
+- persisted outcome mapping,
+- and shared Prisma Client use.
+
+The implementation must use the existing Child model. No schema or migration
+change is approved.
+
+## `apps/api`
+
+The API will own:
+
+- the nested `PATCH` route,
+- the existing authentication guard and neutral principal resolution,
+- dependency composition,
+- HTTP 200, 400, 401, and identical 404 mapping,
+- and minimum response serialization.
+
+Controllers must not own Child normalization, validation, authorization, or
+persistence rules.
+
+## Required future tests
+
+The implementation sprint must include:
+
+- missing, non-string, empty, and whitespace-only `displayName` validation,
+- trimming and persisted normalized response behavior,
+- valid Unicode behavior,
+- exactly 80 and more than 80 Unicode code-point boundaries,
+- duplicate `displayName` values within one Family,
+- strict unknown-field rejection for every ownership and deferred-domain field,
+- unauthenticated HTTP 401 behavior,
+- authenticated successful mutation,
+- same-normalized-value mutation and `updatedAt` refresh behavior,
+- immutable `id`, `familyId`, and `createdAt` behavior,
+- tests proving `familyId`, `childId`, `updatedAt`, and User identity cannot be
+  supplied through the body,
+- membership-scoped lookup and atomic mutation tests,
+- two-User/two-Family isolation,
+- one User with multiple Family memberships remaining correctly scoped,
+- identical 404 bodies for missing, inaccessible, and path-mismatched targets,
+- no upsert behavior,
+- concurrent valid mutation behavior,
+- failed-mutation atomicity,
+- response-shape and sensitive-field exclusion,
+- log checks excluding `displayName`, passwords, and raw session tokens,
+- architecture tests preserving package independence and one Prisma Client
+  owner,
+- disposable PostgreSQL runtime verification,
+- cleanup,
+- and regression verification of authentication, Family, Pregnancy, and Child
+  create/read behavior.
+
+---
+
+# 37. Explicit Exclusions and Sprint 2.6D Gate
+
+The mutation decision does not approve:
+
+- another Child field,
+- a general Child update endpoint,
+- changing `id`, `familyId`, `createdAt`, or client-supplying `updatedAt`,
+- moving a Child between Families,
+- bulk mutation,
+- upsert,
+- mutation history or audit events,
+- legal, verified, preferred, given, family, nickname, or birth-certificate
+  names,
+- birth date, age, sex, gender, demographic, guardian, custody, ownership,
+  medical, school, identifier, or lifecycle data,
+- Pregnancy linkage or transition,
+- Timeline, Health, Media, AI, reminder, notification, or cross-domain
+  workflows,
+- deletion, archive, export, retention, succession, or adult-ownership transfer,
+- new Family roles, membership management, or a general permission engine,
+- mobile or admin UI,
+- or Better Auth changes.
+
+These exclusions remain deferred and must not be anticipated through request
+fields, response fields, columns, relationships, events, abstractions, or side
+effects.
+
+This decision unblocks exactly:
+
+**Sprint 2.6D — Minimum Child `displayName` Mutation Vertical**
+
+Sprint 2.6D may implement only:
+
+- the strict mutation validation contract in `@lumora/child`,
+- one FamilyMembership-scoped repository mutation operation,
+- `PATCH /families/:familyId/children/:childId`,
+- the minimum HTTP response and deterministic errors in section 30,
+- system-managed `updatedAt` behavior,
+- the tests listed in section 36,
+- disposable PostgreSQL verification without a migration,
+- regression verification of existing domains,
+- and truthful implementation documentation.
+
+Implementation may begin only if the repository is clean, this decision remains
+approved, the endpoint requires no schema change, and no excluded or unresolved
+domain behavior is introduced.
