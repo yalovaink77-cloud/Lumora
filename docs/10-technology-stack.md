@@ -289,7 +289,10 @@ Strategy:
 - **Persistence** flows through `@lumora/database` (Prisma schema and migrations in `packages/database`).
 - **Custom JWT authentication systems are not approved** as Lumora's primary auth foundation.
 
-Advanced authentication features — social login, passkeys, MFA, password reset delivery, email verification, roles, and public-launch rate limiting — remain deferred until separately documented.
+Verified email ownership is approved in
+`docs/18-verified-email-ownership-architecture-decision.md`; implementation is
+pending. Social login, passkeys, MFA, password-reset delivery, and
+public-launch rate-limit deployment remain deferred until separately documented.
 
 Implementation (Sprint 2.3B):
 
@@ -307,6 +310,26 @@ Implementation (Sprint 2.3B):
 - Response safety: Better Auth session cookies remain the HTTP-only transport while
   raw token fields are removed from JSON response bodies
 - Custom JWT authentication systems are not approved
+
+Approved verified-email architecture (Sprint 2.8A.1):
+
+- Better Auth 1.6.23 remains the verification-token issuer and verifier
+- Authenticated Lumora resend and confirmation facades bind verification to the
+  matching neutral principal; raw Better Auth verification and resend routes
+  are not externally exposed
+- Verification delivery composes through a provider-neutral port; no commercial
+  provider is selected
+- Production must fail closed without a production-capable delivery adapter
+- Canonical email uses Better Auth's installed syntax validation followed only
+  by complete-address lowercase conversion
+- Unverified Users retain sign-in and existing private-feature access
+- Security-sensitive consumers may require trusted `emailVerified`
+- The future neutral principal is `id`, canonical `email`, `emailVerified`, and
+  `name`; it contains no Family role or permission
+- Existing `User.emailVerified` is authoritative; the built-in stateless
+  verification link requires no Prisma migration
+- Sprint 2.8A.2 may implement and PostgreSQL-verify this architecture before
+  Family invitation implementation begins
 
 Responsibilities:
 

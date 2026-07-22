@@ -1,6 +1,6 @@
 # Authentication Architecture Decision
 
-Version: 1.0
+Version: 1.1
 
 Status: Approved
 
@@ -272,7 +272,6 @@ The following remain out of scope until separately documented and approved:
 - passkeys
 - MFA
 - password reset delivery
-- email verification delivery
 - roles and permissions
 - family invitations
 - guardian authorization
@@ -284,6 +283,11 @@ The following remain out of scope until separately documented and approved:
 - production email provider
 - advanced abuse protection
 - public-launch rate limiting
+
+Email verification ownership, delivery architecture, canonicalization, and
+neutral principal assurance are no longer deferred. They are approved in
+`docs/18-verified-email-ownership-architecture-decision.md`; implementation
+remains pending in Sprint 2.8A.2.
 
 ---
 
@@ -371,6 +375,22 @@ The following remain out of scope until separately documented and approved:
 - The repeatable command is `pnpm test:auth:postgres`. It creates and removes an
   isolated `postgres:16-alpine` container and does not require persistent test data.
 
+## Approved verified-email extension (Sprint 2.8A.1)
+
+The future neutral principal adds trusted `emailVerified: boolean` while
+retaining the current `id`, canonical `email`, and `name`.
+
+This assurance:
+
+- comes from Better Auth's server-resolved User state,
+- does not place Family roles or permissions in sessions,
+- does not globally block unverified Users from existing private features,
+- and is required by the separately approved Family invitation-acceptance gate.
+
+The exact architecture, delivery boundary, canonicalization, token behavior,
+privacy requirements, and implementation gate are defined in
+`docs/18-verified-email-ownership-architecture-decision.md`.
+
 ---
 
 # 15. Implementation Gate
@@ -395,6 +415,7 @@ Review and, if necessary, revise this decision when:
 - regulatory obligations change
 - acquisition or infrastructure migration occurs
 - session architecture materially changes
+- verified-email behavior or canonicalization changes
 
 ---
 
@@ -407,3 +428,4 @@ Review and, if necessary, revise this decision when:
 - `docs/09-repository-layout.md`
 - `docs/10-technology-stack.md`
 - `docs/11-founder-independence-and-long-term-continuity.md`
+- `docs/18-verified-email-ownership-architecture-decision.md`

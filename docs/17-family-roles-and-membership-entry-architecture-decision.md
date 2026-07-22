@@ -1,8 +1,8 @@
 # Basic Family Roles and Membership Entry Architecture Decision
 
-Version: 1.0
+Version: 1.1
 
-Status: Approved Decisions — Sprint 2.8B Blocked
+Status: Approved — Verified Email Implementation Pending
 
 Phase: MVP Family Collaboration Foundation
 
@@ -288,30 +288,34 @@ Invitation creation must not:
 
 Invitation input accepts exactly one `email` string.
 
-The future implementation must normalize it by:
+`docs/18-verified-email-ownership-architecture-decision.md` supersedes the
+provisional normalization steps in version 1.0 of this decision.
 
-1. trimming leading and trailing whitespace,
-2. applying Unicode NFC normalization,
-3. applying locale-independent lowercase conversion to the complete address,
-4. requiring between 3 and 254 Unicode code points,
-5. and requiring the result to pass the same approved email syntax validation
-   used by the Better Auth email/password identity boundary.
+The shared canonicalization algorithm is:
+
+1. require the original string to pass the installed Better Auth/Zod practical
+   email syntax validation,
+2. lowercase the complete address with JavaScript's locale-independent
+   `String.prototype.toLowerCase()`,
+3. and perform no other transformation.
 
 The normalized result is persisted as `targetEmailNormalized`.
 
-Acceptance compares:
+Therefore:
 
-- the persisted normalized target,
-- with the authenticated User's canonical email normalized by the same shared
-  identity-email contract.
+- surrounding whitespace is rejected rather than trimmed,
+- raw Unicode email input is unsupported,
+- NFC and compatibility normalization are not applied,
+- provider-specific dot and plus transformations are prohibited,
+- and invitation acceptance compares the persisted target with the principal's
+  exact canonical email.
 
 No package may introduce a second, inconsistent normalization algorithm.
 Display casing is not preserved because the invitation response does not return
 the target email.
 
-The verified-email prerequisite must confirm that Better Auth's persisted email,
-verification flow, sign-in behavior, and this canonicalization contract are
-consistent.
+`@lumora/auth` owns the canonicalizer implementation. Family consumes it through
+an infrastructure-neutral port and does not import Better Auth.
 
 ---
 
@@ -740,7 +744,8 @@ The minimum invitation persistence contains:
 - `id` — opaque, system-generated, immutable,
 - `familyId` — required and immutable,
 - `inviterMembershipId` — required and immutable,
-- `targetEmailNormalized` — required and immutable, `VARCHAR(254)`,
+- `targetEmailNormalized` — required, immutable, and `TEXT` so it matches the
+  canonical account-email storage contract,
 - `role` — required, immutable, and constrained to MEMBER,
 - `secretHash` — required, immutable, fixed-length, and unique,
 - `expiresAt` — required, system-generated, timezone-aware,
@@ -1151,25 +1156,19 @@ Sprint 2.8B is blocked.
 All Family-role, permission, invitation, lifecycle, API, persistence, privacy,
 and package decisions required for the minimum vertical are approved here.
 
-The one remaining blocker is:
+The verified-email architecture is approved in
+`docs/18-verified-email-ownership-architecture-decision.md`.
 
-**Lumora has no approved and implemented way to establish trustworthy verified
-control of the canonical email bound to an authenticated Better Auth User.**
+The one remaining blocker is implementation:
 
-Before Sprint 2.8B may begin, one narrow prerequisite decision and implementation
-must define and verify:
+**Lumora has not yet implemented and PostgreSQL-verified the approved way to
+establish trustworthy verified control of the canonical email bound to an
+authenticated Better Auth User.**
 
-- how the User proves control of the email inbox,
-- how verification is delivered,
-- how Better Auth sets trustworthy `emailVerified`,
-- whether unverified sign-up may create an application-authorized session,
-- how unverified-email squatting and retry are handled,
-- the canonical email normalization contract,
-- how verified state reaches the neutral identity boundary,
-- and privacy-safe verification errors and tests.
-
-That prerequisite must not introduce a second authentication system or custom
-verification cryptography.
+Sprint 2.8A.2 is the approved prerequisite implementation sprint. It must follow
+the exact canonicalization, delivery, Better Auth, principal, privacy, session,
+and testing requirements in the verified-email ADR without introducing a second
+authentication system or custom verification cryptography.
 
 Sprint 2.8B may begin only after the verified-email prerequisite is implemented,
 PostgreSQL-verified, documented, and committed. It may then implement only:
@@ -1237,4 +1236,5 @@ Review this decision when:
 - `docs/14-pregnancy-domain-architecture-decision.md`
 - `docs/15-child-domain-architecture-decision.md`
 - `docs/16-timeline-domain-architecture-decision.md`
+- `docs/18-verified-email-ownership-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
