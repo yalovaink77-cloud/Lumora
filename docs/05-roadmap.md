@@ -51,10 +51,9 @@
 - Core use is understandable without unnecessary complexity.
 - The product stays within its documented MVP boundaries.
 - The approved medical-safety and AI-limitation disclosure is presented on the
-  two approved authenticated surfaces once the `apps/mobile` authenticated
-  shell sequence in
-  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md` is
-  implemented.
+  two approved authenticated surfaces in `apps/mobile` (Sprint 2.9B.3;
+  architecture in
+  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`).
 
 ## 4. Beta Phase
 

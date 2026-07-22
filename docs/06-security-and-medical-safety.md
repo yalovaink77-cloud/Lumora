@@ -3,9 +3,11 @@
 This document defines product-level policies for privacy, safety, and trust. It states intent and boundaries only — not implementation, legal advice, or technical design.
 
 The minimum MVP user-facing medical-safety and AI-limitation disclosure —
-including canonical English meaning, approved surfaces, non-persistence rules,
-and the client presentation gate — is defined in
+including canonical English meaning, approved surfaces, and non-persistence
+rules — is defined in
 `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`.
+Canonical copy lives in `@lumora/shared`; presentation is implemented on the
+`apps/mobile` authenticated shell (Sprint 2.9B.3).
 
 ---
 

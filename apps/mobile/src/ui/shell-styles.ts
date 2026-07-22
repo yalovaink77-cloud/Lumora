@@ -9,6 +9,15 @@ export const shellStyles = StyleSheet.create({
     paddingVertical: 32,
     justifyContent: "center",
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    paddingBottom: 40,
+  },
   title: {
     fontSize: 24,
     fontWeight: "600",
@@ -41,9 +50,12 @@ export const shellStyles = StyleSheet.create({
   primaryButton: {
     backgroundColor: "#111111",
     borderRadius: 8,
+    minHeight: 48,
     paddingVertical: 14,
+    paddingHorizontal: 16,
     alignItems: "center",
-    marginTop: 8,
+    justifyContent: "center",
+    marginTop: 16,
   },
   primaryButtonDisabled: {
     opacity: 0.5,
@@ -56,7 +68,9 @@ export const shellStyles = StyleSheet.create({
   secondaryButton: {
     marginTop: 16,
     alignItems: "center",
-    paddingVertical: 10,
+    justifyContent: "center",
+    minHeight: 48,
+    paddingVertical: 12,
   },
   secondaryButtonText: {
     color: "#111111",
@@ -75,6 +89,18 @@ export const shellStyles = StyleSheet.create({
     lineHeight: 22,
     color: "#333333",
     marginBottom: 12,
+  },
+  disclosureText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#111111",
+    marginBottom: 16,
+  },
+  contentId: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#666666",
+    marginBottom: 16,
   },
   centered: {
     flex: 1,

@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
@@ -31,9 +32,7 @@ export default function HomeScreen() {
       <Text style={shellStyles.title} accessibilityRole="header">
         Home
       </Text>
-      <Text style={shellStyles.subtitle}>
-        You are signed in to the Lumora authenticated shell.
-      </Text>
+      <Text style={shellStyles.subtitle}>You are signed in to Lumora.</Text>
 
       <Text
         style={shellStyles.bodyText}
@@ -61,12 +60,24 @@ export default function HomeScreen() {
         </Text>
       ) : null}
 
+      <Link href="/(app)/safety" asChild>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel="Open Safety and Limitations"
+          style={shellStyles.primaryButton}
+        >
+          <Text style={shellStyles.primaryButtonText}>
+            Safety & Limitations
+          </Text>
+        </Pressable>
+      </Link>
+
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Sign out"
         accessibilityState={{ disabled: signingOut, busy: signingOut }}
         style={[
-          shellStyles.primaryButton,
+          shellStyles.secondaryButton,
           signingOut ? shellStyles.primaryButtonDisabled : null,
         ]}
         disabled={signingOut}
@@ -75,9 +86,9 @@ export default function HomeScreen() {
         }}
       >
         {signingOut ? (
-          <ActivityIndicator color="#ffffff" />
+          <ActivityIndicator />
         ) : (
-          <Text style={shellStyles.primaryButtonText}>Sign out</Text>
+          <Text style={shellStyles.secondaryButtonText}>Sign out</Text>
         )}
       </Pressable>
     </View>

@@ -24,8 +24,10 @@ const requiredRoutes = [
   "app/(auth)/_layout.tsx",
   "app/(auth)/sign-in.tsx",
   "app/(auth)/register.tsx",
+  "app/disclosure.tsx",
   "app/(app)/_layout.tsx",
   "app/(app)/index.tsx",
+  "app/(app)/safety.tsx",
 ];
 
 for (const route of requiredRoutes) {

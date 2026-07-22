@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Presentation Not Implemented)
+Status: Approved — Presentation Implemented (Sprint 2.9B.3)
 
 Phase: MVP Medical Safety Disclosure Foundation
 
@@ -508,6 +508,26 @@ Sprint 2.9A documents:
 
 No code, schema, migration, package, endpoint, or UI is introduced by this
 sprint.
+
+---
+
+# 19.1 Sprint 2.9B.3 Presentation Implementation Record
+
+Sprint 2.9B.3 implements the approved presentation surfaces:
+
+- framework-neutral canonical export in `@lumora/shared`
+  (`lumora.safety.mvp.medical-ai.v1` + exact English copy),
+- Expo Router `/disclosure` authenticated-entry gate before Home,
+- in-memory process-lifetime continuation flag (resets on sign-out, principal
+  change, and process death; never persisted),
+- permanently reachable `/(app)/safety` Safety & Limitations route from Home,
+- and proportionate content, navigation, privacy, and accessibility tests.
+
+No acknowledgment persistence, REST/CMS ownership, schema/migration, Family
+lookup, analytics, Health, or AI features were added.
+
+Verification gap intentionally deferred: interactive Android/iOS device or
+emulator smoke against a running API was not executed in this environment.
 
 ---
 

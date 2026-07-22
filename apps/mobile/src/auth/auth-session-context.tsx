@@ -14,6 +14,12 @@ import {
   GENERIC_SIGN_IN_FAILURE_MESSAGE,
   GENERIC_SIGN_OUT_FAILURE_MESSAGE,
 } from "./auth-user-messages";
+import {
+  continueDisclosureForPrincipal,
+  createInitialDisclosureProcessState,
+  resetDisclosureProcessState,
+  type DisclosureProcessState,
+} from "./disclosure-process-state";
 import { fetchNeutralPrincipal } from "./fetch-neutral-principal";
 import {
   clearKnownMobileAuthStorage,
@@ -24,7 +30,7 @@ import { InvalidApiBaseUrlError } from "../config/api-base-url";
 import type { NeutralAuthenticatedPrincipal } from "./neutral-principal";
 import {
   createInitialShellSessionState,
-  toAuthenticatedState,
+  resolveAuthenticatedShellState,
   toBootstrappingState,
   toErrorState,
   toUnauthenticatedState,
@@ -49,6 +55,7 @@ export type AuthSessionContextValue = {
     password: string;
   }) => Promise<AuthActionResult>;
   signOut: () => Promise<AuthActionResult>;
+  continueDisclosure: () => void;
   retryBootstrap: () => void;
 };
 
@@ -86,6 +93,7 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
             message: resolveConfigErrorMessage(),
           }),
           signOut: async () => ({ ok: true }),
+          continueDisclosure: () => undefined,
           retryBootstrap: () => undefined,
         }}
       >
@@ -104,6 +112,8 @@ function AuthSessionProviderInner({ children }: { children: ReactNode }) {
   const [shellState, setShellState] = useState<ShellSessionState>(
     createInitialShellSessionState,
   );
+  const [disclosureState, setDisclosureState] =
+    useState<DisclosureProcessState>(createInitialDisclosureProcessState);
   const [bootstrapNonce, setBootstrapNonce] = useState(0);
 
   const confirmSession = useEffectEvent(async () => {
@@ -118,6 +128,7 @@ function AuthSessionProviderInner({ children }: { children: ReactNode }) {
     }
 
     if (!sessionQuery.data?.session) {
+      setDisclosureState(resetDisclosureProcessState());
       setShellState(toUnauthenticatedState());
       return;
     }
@@ -130,13 +141,25 @@ function AuthSessionProviderInner({ children }: { children: ReactNode }) {
     });
 
     if (result.kind === "ok") {
-      setShellState(toAuthenticatedState(result.principal));
+      let nextDisclosure = disclosureState;
+      if (
+        disclosureState.continuedForPrincipalId !== null &&
+        disclosureState.continuedForPrincipalId !== result.principal.id
+      ) {
+        nextDisclosure = resetDisclosureProcessState();
+        setDisclosureState(nextDisclosure);
+      }
+
+      setShellState(
+        resolveAuthenticatedShellState(result.principal, nextDisclosure),
+      );
       return;
     }
 
     if (result.kind === "unauthorized") {
       await authClient.signOut();
       await clearKnownMobileAuthStorage();
+      setDisclosureState(resetDisclosureProcessState());
       setShellState(toUnauthenticatedState());
       return;
     }
@@ -202,11 +225,22 @@ function AuthSessionProviderInner({ children }: { children: ReactNode }) {
       try {
         await authClient.signOut();
         await clearKnownMobileAuthStorage();
+        setDisclosureState(resetDisclosureProcessState());
         setShellState(toUnauthenticatedState());
         return { ok: true };
       } catch {
         return { ok: false, message: GENERIC_SIGN_OUT_FAILURE_MESSAGE };
       }
+    },
+    continueDisclosure() {
+      const principal = shellState.principal;
+      if (!principal || shellState.status !== "authenticated-entry") {
+        return;
+      }
+
+      const nextDisclosure = continueDisclosureForPrincipal(principal.id);
+      setDisclosureState(nextDisclosure);
+      setShellState(resolveAuthenticatedShellState(principal, nextDisclosure));
     },
     retryBootstrap() {
       setShellState(toBootstrappingState());

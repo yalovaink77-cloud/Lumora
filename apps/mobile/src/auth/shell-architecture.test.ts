@@ -21,12 +21,12 @@ function listRouteFiles(dir: string): string[] {
   return files;
 }
 
-test("Expo Router auth and app route groups exist without Family feature screens", () => {
+test("Expo Router exposes disclosure and Safety routes without Family screens", () => {
   assert.equal(existsSync(join(appRoot, "app/(auth)/sign-in.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/(auth)/register.tsx")), true);
+  assert.equal(existsSync(join(appRoot, "app/disclosure.tsx")), true);
   assert.equal(existsSync(join(appRoot, "app/(app)/index.tsx")), true);
-  assert.equal(existsSync(join(appRoot, "app/(auth)/_layout.tsx")), true);
-  assert.equal(existsSync(join(appRoot, "app/(app)/_layout.tsx")), true);
+  assert.equal(existsSync(join(appRoot, "app/(app)/safety.tsx")), true);
 
   const routeFiles = listRouteFiles(join(appRoot, "app"));
   const routeNames = routeFiles.map((file) => file.slice(appRoot.length));
@@ -36,14 +36,46 @@ test("Expo Router auth and app route groups exist without Family feature screens
 
   assert.equal(
     routeNames.some((name) =>
-      /family|pregnancy|child|timeline|invitation|safety/i.test(name),
+      /family|pregnancy|child|timeline|invitation/i.test(name),
     ),
     false,
   );
   assert.doesNotMatch(joined, /\bOWNER\b|\bMEMBER\b|familyId/);
   assert.doesNotMatch(joined, /AsyncStorage|jsonwebtoken|Bearer /);
   assert.doesNotMatch(joined, /\/families|\/pregnancies|\/children|\/timeline/);
-  assert.doesNotMatch(joined, /lumora\.safety\.mvp\.medical-ai\.v1/);
+  assert.match(
+    readFileSync(join(appRoot, "src/safety/SafetyDisclosureBody.tsx"), "utf8"),
+    /@lumora\/shared|LUMORA_MVP_SAFETY/,
+  );
+});
+
+test("disclosure state is in-memory only and not part of principal/session", () => {
+  const sessionSource = readFileSync(
+    join(appRoot, "src/auth/auth-session-context.tsx"),
+    "utf8",
+  );
+  const disclosureSource = readFileSync(
+    join(appRoot, "src/auth/disclosure-process-state.ts"),
+    "utf8",
+  );
+  const principalSource = readFileSync(
+    join(appRoot, "src/auth/neutral-principal.ts"),
+    "utf8",
+  );
+  const safetySource = readFileSync(
+    join(appRoot, "src/safety/SafetyDisclosureBody.tsx"),
+    "utf8",
+  );
+
+  assert.match(sessionSource, /continueDisclosure/);
+  assert.match(sessionSource, /resetDisclosureProcessState/);
+  assert.match(disclosureSource, /continuedForPrincipalId/);
+  assert.doesNotMatch(disclosureSource, /AsyncStorage|SecureStore|fetch\(/);
+  assert.doesNotMatch(principalSource, /disclosure|continued|consent/i);
+  assert.doesNotMatch(sessionSource, /console\.(log|info|debug|warn|error)/);
+  assert.doesNotMatch(safetySource, /analytics|track\(|consent|I agree/i);
+  assert.doesNotMatch(safetySource, /FamilyMembership|OWNER|MEMBER/);
+  assert.match(safetySource, /@lumora\/shared/);
 });
 
 test("session shell uses Better Auth Expo cookie transport and /auth/me", () => {
@@ -67,6 +99,4 @@ test("session shell uses Better Auth Expo cookie transport and /auth/me", () => 
   assert.match(sessionSource, /getCookie/);
   assert.match(principalSource, /\/auth\/me/);
   assert.match(principalSource, /credentials: "omit"/);
-  assert.doesNotMatch(sessionSource, /console\.(log|info|debug|warn|error)/);
-  assert.doesNotMatch(principalSource, /console\.(log|info|debug|warn|error)/);
 });

@@ -266,9 +266,15 @@ Sprint 2.9B.2 authenticated shell (implemented):
 - Expo Router `~57.0.8` with `(auth)` / `(app)` route groups
 - Registration, sign-in, session restore, Home, sign-out
 - Neutral principal via cookie transport + `GET /auth/me`
-- Disclosure / Safety & Limitations deferred to Sprint 2.9B.3
 
-Next gate: Sprint 2.9B.3 ADR-019 disclosure surfaces
+Sprint 2.9B.3 disclosure presentation (implemented):
+
+- Canonical `lumora.safety.mvp.medical-ai.v1` export from `@lumora/shared`
+- `/disclosure` authenticated-entry gate (in-memory continuation only)
+- `/(app)/safety` permanent Safety & Limitations route from Home
+
+Next gate: product roadmap work beyond the minimum authenticated shell
+sequence (Family UI and later domains remain deferred)
 
 ---
 
@@ -534,13 +540,12 @@ Approved boundary:
 Current verified application state:
 
 - `apps/api` is not a user-facing disclosure surface
-- `apps/mobile` has the authenticated session shell but does not yet present
-  ADR-019 disclosure surfaces
+- `apps/mobile` presents ADR-019 disclosure surfaces on the authenticated shell
 - Shell architecture is approved in
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
-- Sprint 2.9B.1 Expo foundation + Better Auth Expo transport is implemented
-- Sprint 2.9B.2 authenticated session shell is implemented
-- Next implementation unlock is Sprint 2.9B.3 (ADR-019 disclosure surfaces)
+- Sprint 2.9B.1–2.9B.3 authenticated shell + disclosure presentation is
+  implemented
+- Canonical safety copy is owned by `@lumora/shared`
 
 ---
 
