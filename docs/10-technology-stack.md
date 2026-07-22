@@ -288,7 +288,16 @@ Sprint 2.11B minimum mobile Pregnancy list/create/detail (implemented):
 - Family-scoped process-memory Pregnancy state
 - Family detail Pregnancies entry; Child/Timeline UI still deferred
 
-Next gate: minimum Child mobile experience architecture (documentation-first)
+Sprint 2.12A minimum mobile Child experience architecture (approved; client not
+implemented):
+
+- Nested routes under `/(app)/families/[familyId]/children…` including dedicated
+  displayName edit route
+- Cookie-session Child API client boundary with DTO validation, timeout, abort,
+  and Family-scoped process-memory state
+- Family detail Children entry; Timeline UI and Pregnancy linkage still deferred
+
+Next gate: Sprint 2.12B minimum mobile Child list/create/detail/displayName edit
 
 ---
 
@@ -497,7 +506,10 @@ Implementation (Sprint 2.6B):
   removing the container
 
 The package, persistence, privacy, and lifelong-continuity boundaries are
-defined in `docs/15-child-domain-architecture-decision.md`.
+defined in `docs/15-child-domain-architecture-decision.md`. The minimum mobile
+Child client architecture is approved in
+`docs/23-minimum-mobile-child-experience-architecture-decision.md`
+(Sprint 2.12A; implementation Sprint 2.12B).
 
 ---
 
@@ -561,6 +573,9 @@ Current verified application state:
   implemented
 - Sprint 2.10B minimum mobile Family list/create/detail is implemented
 - Sprint 2.11B minimum mobile Pregnancy list/create/detail is implemented
+- Sprint 2.12A minimum mobile Child experience architecture is approved;
+  client implementation is Sprint 2.12B per
+  `docs/23-minimum-mobile-child-experience-architecture-decision.md`
 - Canonical safety copy is owned by `@lumora/shared`
 
 ---

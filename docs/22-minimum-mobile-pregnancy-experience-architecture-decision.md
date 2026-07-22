@@ -740,7 +740,8 @@ Deferred:
 - Pregnancy Timeline mobile entry after a dedicated Timeline mobile ADR
 - Pregnancy `displayName` update/rename UX (no update endpoint today)
 - any future medical or date fields only through ADR-014 review triggers
-- Child UI after its own client architecture decision
+- Child UI after ADR-023 / Sprint 2.12B
+  (`docs/23-minimum-mobile-child-experience-architecture-decision.md`)
 
 ---
 

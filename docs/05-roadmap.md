@@ -59,8 +59,11 @@
   `docs/21-minimum-mobile-family-experience-architecture-decision.md`.
 - The minimum mobile Pregnancy list/create/detail experience is implemented in
   `apps/mobile` (Sprint 2.11B) per
-  `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`, before
-  Child/Timeline UI.
+  `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
+- The minimum mobile Child list/create/detail/displayName-edit experience is
+  architecturally approved (Sprint 2.12A) in
+  `docs/23-minimum-mobile-child-experience-architecture-decision.md`, with
+  client implementation planned as Sprint 2.12B before Timeline UI.
 
 ## 4. Beta Phase
 

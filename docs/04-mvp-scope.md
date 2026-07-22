@@ -26,6 +26,10 @@ Deliver a small, usable, private product that allows a mother to organize the es
   `apps/mobile` per
   `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`
   (Sprint 2.11B)
+- Minimum mobile Child list/create/detail/displayName-edit experience
+  architecture approved in
+  `docs/23-minimum-mobile-child-experience-architecture-decision.md`
+  (Sprint 2.12A; client implementation follows in Sprint 2.12B)
 
 ## 3. Excluded Features
 
