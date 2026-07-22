@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Client Not Implemented)
+Status: Approved — Implemented (Sprint 2.13B)
 
 Phase: MVP Client Timeline Foundation
 
@@ -836,3 +836,68 @@ Sprint 2.13A documents:
 
 No application code, dependencies, lockfiles, schema, migrations, or tests are
 changed by this sprint.
+
+---
+
+# 20. Sprint 2.13B Completion Record
+
+Sprint 2.13B implements the minimum subject-scoped Timeline experience in
+`apps/mobile` against existing Timeline API contracts only.
+
+## 20.1 Dependency
+
+- `@react-native-community/datetimepicker@9.1.0` installed via
+  `expo install` for Expo SDK 57
+- Expo config plugin registered in `apps/mobile/app.json`
+- No `android/` or `ios/` native project directories generated
+
+## 20.2 Routes and subject detail entries
+
+- Pregnancy Timeline list/create/detail under
+  `/(app)/families/[familyId]/pregnancies/[pregnancyId]/timeline…`
+- Child Timeline list/create/detail under
+  `/(app)/families/[familyId]/children/[childId]/timeline…`
+- Pregnancy detail and Child detail each provide an accessible Timeline entry
+- Routes remain inside `(app)` and inherit authentication + disclosure guards
+
+## 20.3 Timeline API client and state
+
+- Cookie session via Better Auth Expo `getCookie()` + validated API base URL
+- Subject-specific public methods; exactly-one-subject DTO validation
+- `AbortController` + 15s bounded timeout; uniform `TIMELINE_NOT_FOUND` mapping
+- Process-memory state keyed by `familyId` + subject type + subject ID
+- No optimistic create; create refreshes list then opens created event detail
+- No AsyncStorage/SecureStore Timeline persistence
+
+## 20.4 occurredAt behavior
+
+- Native date and time pickers with explicit “Confirm date and time”
+- Untouched default cannot submit; Android dismissal does not confirm
+- Serialization uses confirmed `Date#toISOString()` (UTC `.SSSZ`)
+- Display uses device-local formatting with injectable locale/timeZone for tests
+
+## 20.5 Verification performed
+
+- `@react-native-community/datetimepicker@9.1.0` via `expo install` (Expo SDK
+  57 / RN 0.86.0 / React 19.2.3); Metro loads; no `android/` or `ios/` dirs
+- Mobile lint, type-check, 166 tests, and Expo shell verification passed
+- Workspace lint, type-check, test, and build passed
+- Android and iOS static `expo export` passed
+- Disposable PostgreSQL auth/Family/Pregnancy/Child/Timeline suites passed
+- Prisma schema validate + generate succeeded; no schema or migration changes
+- Privacy/architecture searches: no Timeline AsyncStorage/SecureStore, bearer
+  auth, or sensitive logging in Timeline client code
+- `git diff --check` clean for sprint changes
+
+## 20.6 Device / emulator smoke
+
+No safe existing Android emulator, iOS simulator, or connected device was
+available for interactive smoke in this environment. Interactive native picker
+smoke is therefore not claimed. Static Android/iOS bundle validation remains
+the truthful substitute.
+
+## 20.7 Next truthful UI checkpoint
+
+Invitation / member mobile experience architecture (documentation-first), or
+another deferred client surface only after an explicit product decision — do
+not begin that sprint here.

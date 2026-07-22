@@ -1,4 +1,4 @@
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { Link, Stack, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -133,9 +133,21 @@ export default function PregnancyDetailScreen() {
               Updated {formatPregnancyDate(pregnancy.detail.updatedAt)}
             </Text>
             <Text style={shellStyles.subtitle}>
-              This is not a clinical pregnancy record. Child, Timeline, Health,
-              and AI features are not available on this screen.
+              This is not a clinical pregnancy record. Health and AI features
+              are not available on this screen.
             </Text>
+            <Link
+              href={`/(app)/families/${familyId}/pregnancies/${pregnancyId}/timeline`}
+              asChild
+            >
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Open Pregnancy Timeline"
+                style={shellStyles.primaryButton}
+              >
+                <Text style={shellStyles.primaryButtonText}>Timeline</Text>
+              </Pressable>
+            </Link>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Back to Pregnancies"

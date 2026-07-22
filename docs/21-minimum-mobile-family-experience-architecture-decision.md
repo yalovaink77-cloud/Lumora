@@ -640,3 +640,5 @@ Minimum Pregnancy mobile list/create/detail is implemented in Sprint 2.11B per
 Minimum Child mobile list/create/detail/displayName-edit is implemented in
 Sprint 2.12B per
 `docs/23-minimum-mobile-child-experience-architecture-decision.md`.
+Minimum Timeline mobile list/create/detail is implemented in Sprint 2.13B per
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`.

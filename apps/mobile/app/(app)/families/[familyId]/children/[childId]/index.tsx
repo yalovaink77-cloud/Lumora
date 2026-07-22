@@ -134,8 +134,8 @@ export default function ChildDetailScreen() {
             </Text>
             <Text style={shellStyles.subtitle}>
               This name is not a legal or verified identity, medical identifier,
-              ownership evidence, or login account. Timeline, Pregnancy linkage,
-              Health, and AI features are not available on this screen.
+              ownership evidence, or login account. Pregnancy linkage, Health,
+              and AI features are not available on this screen.
             </Text>
             <Link
               href={`/(app)/families/${familyId}/children/${childId}/edit`}
@@ -149,6 +149,18 @@ export default function ChildDetailScreen() {
                 <Text style={shellStyles.primaryButtonText}>
                   Edit display name
                 </Text>
+              </Pressable>
+            </Link>
+            <Link
+              href={`/(app)/families/${familyId}/children/${childId}/timeline`}
+              asChild
+            >
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Open Child Timeline"
+                style={shellStyles.primaryButton}
+              >
+                <Text style={shellStyles.primaryButtonText}>Timeline</Text>
               </Pressable>
             </Link>
             <Pressable

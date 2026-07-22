@@ -50,7 +50,7 @@ test("Expo Router exposes disclosure, Safety, Family, and Pregnancy routes", () 
     .join("\n");
 
   assert.equal(
-    routeNames.some((name) => /timeline|invitation/i.test(name)),
+    routeNames.some((name) => /invitation/i.test(name)),
     false,
   );
   assert.equal(
@@ -63,10 +63,14 @@ test("Expo Router exposes disclosure, Safety, Family, and Pregnancy routes", () 
   );
   assert.doesNotMatch(joined, /\bOWNER\b|\bMEMBER\b/);
   assert.doesNotMatch(joined, /AsyncStorage|jsonwebtoken|Bearer /);
-  assert.doesNotMatch(joined, /\/timeline/);
+  assert.equal(
+    routeNames.some((name) => /\/timeline/.test(name)),
+    true,
+  );
   assert.match(joined, /\/\(app\)\/families/);
   assert.match(joined, /\/pregnancies/);
   assert.match(joined, /\/children/);
+  assert.match(joined, /\/timeline/);
   assert.match(
     readFileSync(join(appRoot, "src/safety/SafetyDisclosureBody.tsx"), "utf8"),
     /@lumora\/shared|LUMORA_MVP_SAFETY/,

@@ -727,12 +727,15 @@ This decision does not implement or approve:
 
 Deferred:
 
-- Child Timeline mobile entry after ADR-024 / Sprint 2.13B
-  (`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`)
 - any birth-related date or second Child product field only through ADR-015
   review triggers
 - guardian/adult ownership transition
 - Pregnancy-to-Child relationship UI
+
+Implemented after this ADR:
+
+- Child Timeline mobile entry in Sprint 2.13B
+  (`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`)
 
 ---
 
@@ -823,7 +826,5 @@ truthful substitute.
 
 ## 20.7 Next truthful UI checkpoint
 
-Minimum Timeline mobile list/create/detail architecture is approved in
-Sprint 2.13A per
-`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
-(implementation Sprint 2.13B).
+Minimum Timeline mobile list/create/detail is implemented in Sprint 2.13B per
+`docs/24-minimum-mobile-timeline-experience-architecture-decision.md`.

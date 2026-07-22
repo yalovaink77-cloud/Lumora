@@ -82,11 +82,11 @@ test("Pregnancy screens cover required UX without excluded medical/Child/Timelin
   assert.match(detail, /loadPregnancyDetail/);
   assert.match(detail, /Pregnancy not found/);
   assert.match(detail, /Back to Pregnancies/);
+  assert.match(detail, /Open Pregnancy Timeline/);
   assert.doesNotMatch(
     detail,
-    /Open Child|onRename|onDelete|gestational|href=.*\/timeline/i,
+    /Open Child|onRename|onDelete|gestational/i,
   );
-  assert.doesNotMatch(detail, /href=\{?`?\/\(app\)\/.*\/timeline/i);
 });
 
 test("Pregnancy API client uses cookie transport without bearer token or backend imports", () => {

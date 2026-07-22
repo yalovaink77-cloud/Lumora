@@ -30,9 +30,10 @@ Deliver a small, usable, private product that allows a mother to organize the es
   implemented in `apps/mobile` per
   `docs/23-minimum-mobile-child-experience-architecture-decision.md`
   (Sprint 2.12B)
-- Minimum mobile Timeline list/create/detail experience architecture approved
-  in `docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
-  (Sprint 2.13A; client implementation follows in Sprint 2.13B)
+- Minimum mobile Timeline list/create/detail experience implemented in
+  `apps/mobile` per
+  `docs/24-minimum-mobile-timeline-experience-architecture-decision.md`
+  (Sprint 2.13B)
 
 ## 3. Excluded Features
 

@@ -7,6 +7,7 @@ import { AuthSessionProvider } from "../src/auth/auth-session-context";
 import { ChildProvider } from "../src/child/ChildProvider";
 import { FamilyProvider } from "../src/family/FamilyProvider";
 import { PregnancyProvider } from "../src/pregnancy/PregnancyProvider";
+import { TimelineProvider } from "../src/timeline/TimelineProvider";
 
 export default function RootLayout() {
   return (
@@ -16,8 +17,10 @@ export default function RootLayout() {
           <FamilyProvider>
             <PregnancyProvider>
               <ChildProvider>
-                <StatusBar style="auto" />
-                <Stack screenOptions={{ headerShown: false }} />
+                <TimelineProvider>
+                  <StatusBar style="auto" />
+                  <Stack screenOptions={{ headerShown: false }} />
+                </TimelineProvider>
               </ChildProvider>
             </PregnancyProvider>
           </FamilyProvider>

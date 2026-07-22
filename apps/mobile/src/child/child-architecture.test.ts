@@ -96,11 +96,9 @@ test("Child screens cover required UX without excluded medical/Timeline UI", () 
   assert.match(detail, /Child not found/);
   assert.match(detail, /Edit Child display name/);
   assert.match(detail, /\/edit/);
+  assert.match(detail, /Open Child Timeline/);
   assert.match(detail, /Back to Children/);
-  assert.doesNotMatch(
-    detail,
-    /onDelete|guardian|birth date|href=.*\/timeline/i,
-  );
+  assert.doesNotMatch(detail, /onDelete|guardian|birth date/i);
 
   assert.match(edit, /parseUpdateChildDisplayNameInput/);
   assert.match(edit, /updateChildDisplayName/);
