@@ -76,13 +76,14 @@ enum FamilyMembershipRole {
 }
 
 model Family {
-  id          String             @id @default(cuid())
-  displayName String             @db.VarChar(100)
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  memberships FamilyMembership[]
-  pregnancies Pregnancy[]
-  children    Child[]
+  id             String             @id @default(cuid())
+  displayName    String             @db.VarChar(100)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  memberships    FamilyMembership[]
+  pregnancies    Pregnancy[]
+  children       Child[]
+  timelineEvents TimelineEvent[]
 
   @@map("family")
 }
@@ -103,25 +104,49 @@ model FamilyMembership {
 }
 
 model Pregnancy {
-  id          String   @id @default(cuid())
-  familyId    String
-  displayName String   @db.VarChar(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  family      Family   @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  id             String          @id @default(cuid())
+  familyId       String
+  displayName    String          @db.VarChar(100)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  family         Family          @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  timelineEvents TimelineEvent[] @relation("PregnancyTimelineEvents")
 
+  @@unique([id, familyId])
   @@index([familyId])
   @@map("pregnancy")
 }
 
 model Child {
-  id          String   @id @default(cuid())
-  familyId    String
-  displayName String   @db.VarChar(80)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  family      Family   @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  id             String          @id @default(cuid())
+  familyId       String
+  displayName    String          @db.VarChar(80)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  family         Family          @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  timelineEvents TimelineEvent[] @relation("ChildTimelineEvents")
 
+  @@unique([id, familyId])
   @@index([familyId])
   @@map("child")
+}
+
+model TimelineEvent {
+  id                String     @id @default(cuid())
+  familyId          String
+  pregnancyId       String?
+  pregnancyFamilyId String?
+  childId           String?
+  childFamilyId     String?
+  title             String     @db.VarChar(80)
+  occurredAt        DateTime   @db.Timestamptz(3)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  family            Family     @relation(fields: [familyId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  pregnancy         Pregnancy? @relation("PregnancyTimelineEvents", fields: [pregnancyId, pregnancyFamilyId], references: [id, familyId], onDelete: Restrict, onUpdate: Restrict)
+  child             Child?     @relation("ChildTimelineEvents", fields: [childId, childFamilyId], references: [id, familyId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([familyId, pregnancyId, occurredAt(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
+  @@index([familyId, childId, occurredAt(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
+  @@map("timeline_event")
 }

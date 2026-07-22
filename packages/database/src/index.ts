@@ -9,3 +9,4 @@ export {
 export { PrismaChildRepository } from "./prisma-child.repository";
 export { PrismaFamilyRepository } from "./prisma-family.repository";
 export { PrismaPregnancyRepository } from "./prisma-pregnancy.repository";
+export { PrismaTimelineRepository } from "./prisma-timeline.repository";

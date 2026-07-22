@@ -406,6 +406,38 @@ defined in `docs/15-child-domain-architecture-decision.md`.
 
 ---
 
+# Timeline Foundation
+
+Implementation (Sprint 2.7B):
+
+- Domain and application contracts: `@lumora/timeline`
+- Module format: CommonJS, matching the API and database composition boundary
+- Validation: strict Zod parsing with trimmed 1–80-code-point titles and the
+  approved millisecond RFC 3339 timestamp profile
+- Persistence adapter: `PrismaTimelineRepository` in `@lumora/database`
+- Persistence integrity: one `timeline_event` model, a database exactly-one
+  subject check, composite same-Family Pregnancy and Child foreign keys,
+  restrictive deletion, and timezone-aware millisecond occurrence timestamps
+- API composition: `apps/api/src/timeline`
+- Endpoints: subject-specific nested POST create, GET chronological list, and
+  GET direct-get routes for Pregnancy and Child
+- Ordering: `occurredAt DESC`, `createdAt DESC`, then `id DESC`
+- Authorization: neutral authenticated User identifier plus persisted
+  FamilyMembership, Family, and subject scope on every operation
+- Creation race safety: membership authorization, subject ownership, and event
+  persistence run in one serializable Prisma transaction
+- Privacy: responses contain only the minimum subject-specific representation;
+  Timeline content remains outside routine logs and authentication state
+- PostgreSQL verification: `pnpm test:timeline:postgres` builds the repository,
+  validates and deploys all migrations to disposable PostgreSQL 16, and runs
+  Authentication, Family, Pregnancy, Child, and Timeline runtime verification
+  before removing the container
+
+The package, persistence, chronology, privacy, and medical-safety boundaries are
+defined in `docs/16-timeline-domain-architecture-decision.md`.
+
+---
+
 # API
 
 REST

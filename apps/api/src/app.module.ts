@@ -10,6 +10,7 @@ import { HttpBodyModule } from "./http/http-body.module";
 import { PregnancyModule } from "./pregnancy/pregnancy.module";
 import { areTestHttpRoutesEnabled } from "./test-http/test-http.config";
 import { TestHttpModule } from "./test-http/test-http.module";
+import { TimelineModule } from "./timeline/timeline.module";
 
 const optionalTestHttpModule: Type[] = areTestHttpRoutesEnabled()
   ? [TestHttpModule]
@@ -27,6 +28,7 @@ const optionalTestHttpModule: Type[] = areTestHttpRoutesEnabled()
     FamilyModule,
     PregnancyModule,
     ChildModule,
+    TimelineModule,
     ...optionalTestHttpModule,
     HealthModule,
   ],

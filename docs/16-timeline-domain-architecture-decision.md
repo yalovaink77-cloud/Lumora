@@ -1,12 +1,14 @@
 # Timeline Domain Architecture Decision
 
-Version: 1.0
+Version: 1.1
 
-Status: Approved — Sprint 2.7B Ready
+Status: Approved — Sprint 2.7B Implemented
 
 Phase: MVP Domain Foundation
 
 Decision date: 2026-07-22
+
+Version 1.1 records the verified Sprint 2.7B implementation in section 30.
 
 ---
 
@@ -111,7 +113,8 @@ The minimum vertical must:
 - order each subject's events deterministically,
 - and preserve privacy, medical safety, portability, and continuity.
 
-Sprint 2.7B is ready subject to the implementation gate in section 24.
+Sprint 2.7B is implemented according to the gate in section 24 and recorded in
+section 30.
 
 ---
 
@@ -186,6 +189,7 @@ The following rules apply:
 - it must be a string,
 - it is Unicode text,
 - ill-formed Unicode surrogate sequences are rejected,
+- null code point `U+0000` is rejected because PostgreSQL text cannot store it,
 - leading and trailing whitespace is trimmed before validation and persistence,
 - the trimmed value must contain between 1 and 80 Unicode code points,
 - exactly 80 Unicode code points are accepted,
@@ -251,6 +255,7 @@ Additional validation must reject:
 
 - nonexistent Gregorian calendar dates,
 - years outside `0001` through `9999`,
+- values whose UTC normalization falls outside years `0001` through `9999`,
 - hours outside `00` through `23`,
 - minutes or seconds outside `00` through `59`,
 - leap-second value `60`,
@@ -926,12 +931,13 @@ The repeatable root verification command must be
 The implementation must include:
 
 - title validation for missing, non-string, empty, whitespace-only, trimming,
-  valid Unicode, ill-formed Unicode, exactly 80 code points, more than 80 code
-  points, and unknown fields,
+  valid Unicode, ill-formed Unicode, null code point, exactly 80 code points,
+  more than 80 code points, and unknown fields,
 - occurredAt validation for missing, non-string, malformed, nonexistent date,
   missing offset, invalid offset, wrong precision, leap second, exact accepted
   UTC, and exact accepted numeric-offset forms,
 - UTC normalization and canonical serialization tests,
+- normalized UTC year-boundary tests,
 - tests accepting duplicate title and occurredAt values,
 - tests proving occurredAt may differ from createdAt,
 - tests proving no past-or-future server-clock rule is applied,
@@ -1000,7 +1006,7 @@ Implementation may begin only when:
   mutation, deletion, or pagination behavior is introduced,
 - and the repository is clean and verified.
 
-Sprint 2.7B is unblocked.
+Sprint 2.7B is implemented.
 
 ---
 
@@ -1134,7 +1140,43 @@ review, and a clean post-commit working tree are the completion gate.
 
 ---
 
-# 30. References
+# 30. Sprint 2.7B Implementation Record
+
+Status: Implemented
+
+The minimum Timeline create-and-read vertical is implemented within the approved
+boundaries:
+
+- `@lumora/timeline` owns strict Zod validation, normalized input, neutral
+  subject contracts, application behavior, and repository contracts without
+  depending on NestJS, Prisma, Better Auth, Pregnancy, or Child packages.
+- `@lumora/database` owns one `timeline_event` Prisma model, one additive
+  migration, the repository adapter, serializable creation, membership-scoped
+  reads, and deterministic database ordering.
+- The database enforces exactly one subject with a check constraint and
+  same-Family ownership with composite foreign keys.
+- `apps/api` exposes only the approved Pregnancy and Child nested create, list,
+  and direct-get routes.
+- Every unavailable Family, Pregnancy, Child, subject-route, and event
+  combination returns the same `TIMELINE_NOT_FOUND` HTTP 404 response.
+
+`title` is normalized and persisted as required `VARCHAR(80)`. `occurredAt`
+accepts only the approved millisecond RFC 3339 profile, is persisted as
+`TIMESTAMPTZ(3)`, and is returned in canonical UTC. Lists order by
+`occurredAt DESC`, `createdAt DESC`, and `id DESC`.
+
+The repeatable `pnpm test:timeline:postgres` command builds the repository,
+validates and deploys all migrations to disposable PostgreSQL 16, and runs the
+Authentication, Family, Pregnancy, Child, and Timeline runtime suites before
+removing the container.
+
+No update, deletion, upsert, reassignment, combined feed, pagination, Media,
+Health, AI, notification, medical interpretation, or Pregnancy-to-Child
+behavior is implemented.
+
+---
+
+# 31. References
 
 - `docs/START-HERE.md`
 - `docs/01-product-vision.md`

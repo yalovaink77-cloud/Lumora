@@ -53,7 +53,11 @@ test("Pregnancy persistence contains only approved fields and relationships", ()
   assert.match(pregnancyModel, /^\s*updatedAt\s+DateTime\s+@updatedAt$/m);
   assert.match(pregnancyModel, /onDelete: Restrict/);
   assert.match(pregnancyModel, /@@index\(\[familyId\]\)/);
-  assert.doesNotMatch(pregnancyModel, /@unique|@@unique/);
+  assert.match(pregnancyModel, /@@unique\(\[id, familyId\]\)/);
+  assert.doesNotMatch(
+    pregnancyModel,
+    /displayName.*@unique|@@unique\(\[displayName/,
+  );
   assert.doesNotMatch(
     pregnancyModel,
     /\b(userId|membershipId|status|childId|estimatedDueDate|dueDate)\b/,

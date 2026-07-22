@@ -14,6 +14,7 @@
     "test:family:postgres:runtime": "node --import tsx --test src/family/family.postgres.integration.ts",
     "test:pregnancy:postgres:runtime": "node --import tsx --test src/pregnancy/pregnancy.postgres.integration.ts",
     "test:child:postgres:runtime": "node --import tsx --test src/child/child.postgres.integration.ts",
+    "test:timeline:postgres:runtime": "node --import tsx --test src/timeline/timeline.postgres.integration.ts",
     "test:unit": "node --import tsx --test --test-concurrency=1 $(find src -name '*.test.ts' ! -name '*.integration.test.ts' -print)",
     "test:integration": "node --import tsx --test --test-force-exit src/**/*.integration.test.ts"
   },
@@ -23,6 +24,7 @@
     "@lumora/database": "workspace:*",
     "@lumora/family": "workspace:*",
     "@lumora/pregnancy": "workspace:*",
+    "@lumora/timeline": "workspace:*",
     "better-auth": "1.6.23",
     "@nestjs/common": "^11.1.14",
     "@nestjs/config": "^4.0.3",

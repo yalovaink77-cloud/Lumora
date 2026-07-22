@@ -42,7 +42,11 @@ test("Child persistence contains only approved fields and relationships", () => 
   assert.match(childModel, /^\s*updatedAt\s+DateTime\s+@updatedAt$/m);
   assert.match(childModel, /onDelete: Restrict/);
   assert.match(childModel, /@@index\(\[familyId\]\)/);
-  assert.doesNotMatch(childModel, /@unique|@@unique/);
+  assert.match(childModel, /@@unique\(\[id, familyId\]\)/);
+  assert.doesNotMatch(
+    childModel,
+    /displayName.*@unique|@@unique\(\[displayName/,
+  );
   assert.doesNotMatch(
     childModel,
     /\b(userId|membershipId|legalName|birthDate|gender|guardianId|pregnancyId|status|medicalId|ownerId)\b/,

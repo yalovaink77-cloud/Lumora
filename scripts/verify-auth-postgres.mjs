@@ -188,6 +188,13 @@ try {
       env: testEnvironment,
     },
   );
+  run(
+    "pnpm",
+    ["--filter", "@lumora/api", "run", "test:timeline:postgres:runtime"],
+    {
+      env: testEnvironment,
+    },
+  );
 } finally {
   removeContainer();
 }
