@@ -60,6 +60,7 @@ Every new contributor should read the documentation in the following order.
 15. 14-pregnancy-domain-architecture-decision.md
 16. 15-child-domain-architecture-decision.md
 17. 16-timeline-domain-architecture-decision.md
+18. 17-family-roles-and-membership-entry-architecture-decision.md
 
 Do not skip this order.
 

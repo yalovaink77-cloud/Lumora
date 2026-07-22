@@ -1,6 +1,6 @@
 # Family Domain Architecture Decision
 
-Version: 1.1
+Version: 1.2
 
 Status: Approved
 
@@ -498,17 +498,23 @@ The following require narrow follow-up decisions before their respective
 implementation:
 
 1. `displayName` update behavior and who may perform it.
-2. The additional basic MVP membership roles and their exact semantics.
-3. Whether Family may have multiple `OWNER` memberships.
-4. Ownership transfer and last-owner invariants.
-5. Invitation, acceptance, removal, and leave workflows.
-6. Family and membership deletion behavior, including User deletion effects.
-7. Export format, completeness, authority, and legal retention behavior.
-8. Whether a client needs a preferred or last-selected Family, and where that
+2. Ownership transfer and last-owner invariants.
+3. Member removal and leave workflows.
+4. Family and membership deletion behavior, including User deletion effects.
+5. Export format, completeness, authority, and legal retention behavior.
+6. Whether a client needs a preferred or last-selected Family, and where that
    preference belongs.
 
-None of these unresolved decisions blocks the minimum create, list, and
-membership-scoped get foundation defined here.
+`docs/17-family-roles-and-membership-entry-architecture-decision.md` resolves
+the former role-count, additional-role, invitation, and acceptance decisions:
+
+- the MVP roles are exactly `OWNER` and `MEMBER`,
+- every Family has exactly one OWNER,
+- and MEMBER entry requires explicit acceptance of an OWNER-created invitation.
+
+That decision does not alter the implemented Sprint 2.4B create, list, or
+membership-scoped direct-get contracts. Its future invitation implementation
+remains blocked until Lumora can prove verified control of the invited email.
 
 ---
 
@@ -573,6 +579,7 @@ Review this decision when:
 - `docs/10-technology-stack.md`
 - `docs/11-founder-independence-and-long-term-continuity.md`
 - `docs/12-authentication-architecture-decision.md`
+- `docs/17-family-roles-and-membership-entry-architecture-decision.md`
 - `docs/99-deferred-decisions.md`
 
 ---
