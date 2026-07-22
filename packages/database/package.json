@@ -13,6 +13,7 @@
     "migrate:status": "prisma migrate status"
   },
   "dependencies": {
+    "@lumora/child": "workspace:*",
     "@lumora/family": "workspace:*",
     "@lumora/pregnancy": "workspace:*",
     "@prisma/client": "^6.19.2"

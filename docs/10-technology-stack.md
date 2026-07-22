@@ -372,6 +372,35 @@ The package, persistence, privacy, and medical-safety boundaries are defined in
 
 ---
 
+# Child Foundation
+
+Implementation (Sprint 2.6B):
+
+- Domain and application contracts: `@lumora/child`
+- Module format: CommonJS, matching the API and database composition boundary
+- Validation: strict Zod parsing with trimming and an 80 Unicode-code-point
+  maximum
+- Persistence adapter: `PrismaChildRepository` in `@lumora/database`
+- API composition: `apps/api/src/child`
+- Endpoints: `POST /families/:familyId/children`,
+  `GET /families/:familyId/children`, and
+  `GET /families/:familyId/children/:childId`
+- Authorization: neutral authenticated User identifier plus persisted
+  FamilyMembership scope on every persistence operation
+- Creation race safety: membership authorization and Child persistence run in
+  one serializable Prisma transaction
+- Privacy: `displayName` remains heightened-privacy Child data and responses are
+  limited to the minimum Child representation
+- PostgreSQL verification: `pnpm test:child:postgres` builds the repository,
+  validates and deploys all migrations to disposable PostgreSQL 16, and runs
+  authentication, Family, Pregnancy, and Child runtime verification before
+  removing the container
+
+The package, persistence, privacy, and lifelong-continuity boundaries are
+defined in `docs/15-child-domain-architecture-decision.md`.
+
+---
+
 # API
 
 REST

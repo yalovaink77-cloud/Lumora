@@ -82,6 +82,7 @@ model Family {
   updatedAt   DateTime           @updatedAt
   memberships FamilyMembership[]
   pregnancies Pregnancy[]
+  children    Child[]
 
   @@map("family")
 }
@@ -111,4 +112,16 @@ model Pregnancy {
 
   @@index([familyId])
   @@map("pregnancy")
+}
+
+model Child {
+  id          String   @id @default(cuid())
+  familyId    String
+  displayName String   @db.VarChar(80)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  family      Family   @relation(fields: [familyId], references: [id], onDelete: Restrict)
+
+  @@index([familyId])
+  @@map("child")
 }

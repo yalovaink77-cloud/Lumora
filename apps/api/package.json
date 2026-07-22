@@ -13,11 +13,13 @@
     "test:auth:postgres:runtime": "node --import tsx --test src/auth/auth.postgres.integration.ts",
     "test:family:postgres:runtime": "node --import tsx --test src/family/family.postgres.integration.ts",
     "test:pregnancy:postgres:runtime": "node --import tsx --test src/pregnancy/pregnancy.postgres.integration.ts",
+    "test:child:postgres:runtime": "node --import tsx --test src/child/child.postgres.integration.ts",
     "test:unit": "node --import tsx --test --test-concurrency=1 $(find src -name '*.test.ts' ! -name '*.integration.test.ts' -print)",
     "test:integration": "node --import tsx --test --test-force-exit src/**/*.integration.test.ts"
   },
   "dependencies": {
     "@lumora/auth": "workspace:*",
+    "@lumora/child": "workspace:*",
     "@lumora/database": "workspace:*",
     "@lumora/family": "workspace:*",
     "@lumora/pregnancy": "workspace:*",

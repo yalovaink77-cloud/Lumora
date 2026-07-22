@@ -37,6 +37,9 @@ importers:
       '@lumora/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@lumora/child':
+        specifier: workspace:*
+        version: link:../../packages/child
       '@lumora/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -108,10 +111,26 @@ importers:
         specifier: ^8.65.0
         version: 8.65.0(eslint@10.7.0(jiti@2.7.0))(typescript@5.9.3)
 
+  packages/child:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.65.0
+        version: 8.65.0(eslint@10.7.0(jiti@2.7.0))(typescript@5.9.3)
+
   packages/config: {}
 
   packages/database:
     dependencies:
+      '@lumora/child':
+        specifier: workspace:*
+        version: link:../child
       '@lumora/family':
         specifier: workspace:*
         version: link:../family

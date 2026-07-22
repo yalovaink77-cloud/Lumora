@@ -17,6 +17,7 @@
     "test:auth:postgres": "node scripts/verify-auth-postgres.mjs",
     "test:family:postgres": "node scripts/verify-auth-postgres.mjs",
     "test:pregnancy:postgres": "node scripts/verify-auth-postgres.mjs",
+    "test:child:postgres": "node scripts/verify-auth-postgres.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
