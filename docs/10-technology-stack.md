@@ -328,12 +328,12 @@ Implemented verified-email architecture (Sprint 2.8A.2):
 - The neutral principal is `{ id, email, emailVerified, name }`
 - Unverified Users retain sign-in and existing private-feature access
 - Security-sensitive consumers may require trusted `emailVerified`
-- The future neutral principal is `id`, canonical `email`, `emailVerified`, and
+- The neutral principal is `id`, canonical `email`, `emailVerified`, and
   `name`; it contains no Family role or permission
 - Existing `User.emailVerified` is authoritative; the built-in stateless
   verification link requires no Prisma migration
-- Sprint 2.8A.2 may implement and PostgreSQL-verify this architecture before
-  Family invitation implementation begins
+- Sprint 2.8B Family invitation acceptance consumes this verified-email
+  assurance without placing Family roles in authentication sessions
 
 Responsibilities:
 
@@ -349,26 +349,31 @@ Authentication integration belongs inside the auth package.
 
 # Family Foundation
 
-Implementation (Sprint 2.4B):
+Implementation (Sprint 2.4B, extended by Sprint 2.8B):
 
 - Domain and application contracts: `@lumora/family`
 - Module format: CommonJS, matching the NestJS API and database adapter that
   compose the package without introducing another runtime module bridge
 - Persistence adapter: `PrismaFamilyRepository` in `@lumora/database`
 - API composition: `apps/api/src/family`
-- Endpoints: `POST /families`, `GET /families`, and
-  `GET /families/:familyId`
+- Endpoints: `POST /families`, `GET /families`,
+  `GET /families/:familyId`, `POST /families/:familyId/invitations`, and
+  `POST /family-invitations/accept`
 - Authorization: neutral authenticated User identifier plus database-backed
   FamilyMembership scope; Family identifiers alone do not grant access
+- Roles: exactly `OWNER` and `MEMBER`; exactly one OWNER per Family
 - Creation: Family and initial `OWNER` membership are committed in one Prisma
   transaction
+- MEMBER entry: OWNER-created invitation with digest-only secret storage and
+  authenticated verified-email acceptance
 - PostgreSQL verification: `pnpm test:family:postgres` builds the repository,
   deploys all migrations to disposable PostgreSQL 16, runs the existing
-  authentication lifecycle, verifies Family persistence and HTTP isolation,
-  and removes the container
+  authentication lifecycle, verifies Family persistence, invitation entry, and
+  HTTP isolation, and removes the container
 
 The package and persistence boundaries are defined in
-`docs/13-family-domain-architecture-decision.md`.
+`docs/13-family-domain-architecture-decision.md` and
+`docs/17-family-roles-and-membership-entry-architecture-decision.md`.
 
 ---
 

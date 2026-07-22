@@ -803,7 +803,7 @@ Client-provided email, User ID, or verification flags are never trusted.
 
 # 22. Invitation Acceptance Gate
 
-Sprint 2.8B may trust the neutral principal only after this architecture is
+Sprint 2.8B trusts the neutral principal after this architecture is
 implemented and PostgreSQL-verified.
 
 Invitation acceptance requires all of:

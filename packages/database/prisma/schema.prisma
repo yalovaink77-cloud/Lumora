@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id                String             @id
-  name              String
-  email             String
-  emailVerified     Boolean            @default(false)
-  image             String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  sessions          Session[]
-  accounts          Account[]
-  familyMemberships FamilyMembership[]
+  id                        String             @id
+  name                      String
+  email                     String
+  emailVerified             Boolean            @default(false)
+  image                     String?
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  sessions                  Session[]
+  accounts                  Account[]
+  familyMemberships         FamilyMembership[]
+  acceptedFamilyInvitations FamilyInvitation[] @relation("AcceptedFamilyInvitations")
 
   @@unique([email])
   @@map("user")
@@ -73,6 +74,7 @@ model Verification {
 
 enum FamilyMembershipRole {
   OWNER
+  MEMBER
 }
 
 model Family {
@@ -84,23 +86,48 @@ model Family {
   pregnancies    Pregnancy[]
   children       Child[]
   timelineEvents TimelineEvent[]
+  invitations    FamilyInvitation[]
 
   @@map("family")
 }
 
 model FamilyMembership {
-  id        String               @id @default(cuid())
-  familyId  String
-  userId    String
-  role      FamilyMembershipRole
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
-  family    Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  user      User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+  id              String               @id @default(cuid())
+  familyId        String
+  userId          String
+  role            FamilyMembershipRole
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  family          Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+  sentInvitations FamilyInvitation[]   @relation("InvitationInviterMembership")
 
   @@unique([familyId, userId])
+  @@unique([id, familyId])
   @@index([userId])
   @@map("family_membership")
+}
+
+model FamilyInvitation {
+  id                    String               @id @default(cuid())
+  familyId              String
+  inviterMembershipId   String
+  targetEmailNormalized String
+  role                  FamilyMembershipRole
+  secretHash            Bytes                @unique
+  expiresAt             DateTime             @db.Timestamptz(3)
+  consumedAt            DateTime?            @db.Timestamptz(3)
+  acceptedByUserId      String?
+  createdAt             DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime             @updatedAt @db.Timestamptz(3)
+  family                Family               @relation(fields: [familyId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  inviterMembership     FamilyMembership     @relation("InvitationInviterMembership", fields: [inviterMembershipId, familyId], references: [id, familyId], onDelete: Restrict, onUpdate: Restrict)
+  acceptedByUser        User?                @relation("AcceptedFamilyInvitations", fields: [acceptedByUserId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([familyId])
+  @@index([familyId, targetEmailNormalized, consumedAt, expiresAt])
+  @@index([inviterMembershipId])
+  @@map("family_invitation")
 }
 
 model Pregnancy {

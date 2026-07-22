@@ -1,6 +1,6 @@
 # Family Domain Architecture Decision
 
-Version: 1.2
+Version: 1.3
 
 Status: Approved
 
@@ -513,8 +513,9 @@ the former role-count, additional-role, invitation, and acceptance decisions:
 - and MEMBER entry requires explicit acceptance of an OWNER-created invitation.
 
 That decision does not alter the implemented Sprint 2.4B create, list, or
-membership-scoped direct-get contracts. Its future invitation implementation
-remains blocked until Lumora can prove verified control of the invited email.
+membership-scoped direct-get contracts. Sprint 2.8B implements the approved
+OWNER/MEMBER invitation vertical against the verified-email prerequisite from
+`docs/18-verified-email-ownership-architecture-decision.md`.
 
 ---
 

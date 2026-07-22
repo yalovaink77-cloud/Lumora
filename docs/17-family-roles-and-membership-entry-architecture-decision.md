@@ -1,8 +1,8 @@
 # Basic Family Roles and Membership Entry Architecture Decision
 
-Version: 1.2
+Version: 1.3
 
-Status: Approved — Implementation Ready
+Status: Approved — Implemented and PostgreSQL-Verified
 
 Phase: MVP Family Collaboration Foundation
 
@@ -27,10 +27,10 @@ This decision defines:
 - minimum invitation lifecycle,
 - privacy-safe API contracts,
 - persistence and migration requirements,
-- and the gate for a future implementation sprint.
+- and the gate for the Sprint 2.8B implementation.
 
-This sprint is documentation-only. It does not implement roles, invitations,
-email verification, endpoints, schema, migrations, or tests.
+Sprint 2.8B implements the approved vertical. It does not expand beyond the
+contracts recorded here.
 
 ---
 
@@ -83,8 +83,9 @@ Invitation acceptance requires:
 - and one atomic transaction that consumes the invitation and creates or
   resolves the active membership.
 
-The current authentication foundation does not establish verified email
-ownership. Sprint 2.8B therefore remains blocked by the prerequisite in section 26.
+Verified email ownership is implemented and PostgreSQL-verified in Sprint
+2.8A.2. Sprint 2.8B is therefore unblocked and implements the invitation
+vertical against that prerequisite.
 
 ---
 
@@ -1151,12 +1152,13 @@ enums, package abstractions, or permissions.
 
 # 26. Sprint 2.8B Implementation Gate
 
-Sprint 2.8B is unblocked.
+Sprint 2.8B is implemented.
 
 All Family-role, permission, invitation, lifecycle, API, persistence, privacy,
-and package decisions required for the minimum vertical are approved here.
+and package decisions required for the minimum vertical are approved here and
+realized by the Sprint 2.8B vertical.
 
-The verified-email architecture is approved in
+The verified-email architecture is approved and implemented in
 `docs/18-verified-email-ownership-architecture-decision.md`.
 
 Sprint 2.8A.2 implemented and PostgreSQL-verified the approved canonical email,
@@ -1164,7 +1166,7 @@ delivery, Better Auth, principal, privacy, session, scanner-resistance, and
 testing requirements without introducing a second authentication system or
 custom verification cryptography.
 
-Sprint 2.8B may implement only:
+Sprint 2.8B implements only:
 
 - MEMBER enum support,
 - exactly-one-OWNER preservation,
@@ -1178,17 +1180,29 @@ Sprint 2.8B may implement only:
 
 ---
 
-# 27. Sprint 2.8A Completion Record
+# 27. Sprint 2.8B Implementation Record
 
-Sprint 2.8A is complete when:
+Sprint 2.8B implements:
 
-- this decision is approved and committed,
-- the Family ADR records which unresolved decisions are superseded,
-- the authoritative reading order includes this document,
-- targeted documentation formatting passes,
-- `git diff --check` passes,
-- no implementation file changes,
-- and the working tree is clean.
+- `OWNER` and `MEMBER` as the only FamilyMembership roles,
+- PostgreSQL partial unique enforcement of exactly one OWNER per Family,
+- additive `family_invitation` persistence with digest-only secret storage,
+- `POST /families/:familyId/invitations` for OWNER-created MEMBER invitations,
+- `POST /family-invitations/accept` for authenticated verified-email acceptance,
+- atomic invitation consumption and MEMBER membership creation,
+- same-User idempotent replay after consumption,
+- identical non-enumerating `FAMILY_NOT_FOUND` and `INVITATION_NOT_FOUND`
+  outcomes,
+- and MEMBER access to already approved Family, Pregnancy, Child, and Timeline
+  operations through persisted membership existence.
+
+`pnpm test:family:postgres` verifies migration deploy/status, invitation
+create/accept, digest-only persistence, concurrent create and accept races,
+MEMBER domain access, MEMBER invitation denial, and existing Authentication,
+Family, Pregnancy, Child, Timeline, and email-verification runtime suites.
+
+No invitation email delivery, member listing, role change, removal, leave,
+ownership transfer, or Family role session claims are implemented.
 
 ---
 
