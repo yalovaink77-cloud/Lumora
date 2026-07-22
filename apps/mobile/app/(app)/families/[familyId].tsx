@@ -104,8 +104,7 @@ export default function FamilyDetailScreen() {
               Updated {formatFamilyDate(family.detail.updatedAt)}
             </Text>
             <Text style={shellStyles.subtitle}>
-              Child, Timeline, and invitation features are not available on this
-              screen.
+              Timeline and invitation features are not available on this screen.
             </Text>
             <Link
               href={`/(app)/families/${family.detail.id}/pregnancies`}
@@ -117,6 +116,15 @@ export default function FamilyDetailScreen() {
                 style={shellStyles.primaryButton}
               >
                 <Text style={shellStyles.primaryButtonText}>Pregnancies</Text>
+              </Pressable>
+            </Link>
+            <Link href={`/(app)/families/${family.detail.id}/children`} asChild>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Open Children"
+                style={shellStyles.primaryButton}
+              >
+                <Text style={shellStyles.primaryButtonText}>Children</Text>
               </Pressable>
             </Link>
             <Pressable

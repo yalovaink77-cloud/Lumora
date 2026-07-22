@@ -82,10 +82,8 @@ test("Family list/create/detail screens cover required UX without excluded UI", 
     /Invite member|member directory|onRename|onDelete/i,
   );
   assert.match(detail, /Open Pregnancies/);
-  assert.doesNotMatch(
-    detail,
-    /href=\{?`?\/\(app\)\/timeline|href=\{?`?\/\(app\)\/child|Open Timeline|Open Child/i,
-  );
+  assert.match(detail, /Open Children/);
+  assert.doesNotMatch(detail, /href=\{?`?\/\(app\)\/timeline|Open Timeline/i);
 });
 
 test("Family API client uses cookie transport without bearer token or backend imports", () => {

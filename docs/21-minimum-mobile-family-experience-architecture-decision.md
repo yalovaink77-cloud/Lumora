@@ -637,7 +637,6 @@ passed without native prebuild or `android/`/`ios/` directories.
 
 Minimum Pregnancy mobile list/create/detail is implemented in Sprint 2.11B per
 `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
-Minimum Child mobile list/create/detail/displayName-edit architecture is
-approved in Sprint 2.12A per
-`docs/23-minimum-mobile-child-experience-architecture-decision.md`
-(implementation Sprint 2.12B).
+Minimum Child mobile list/create/detail/displayName-edit is implemented in
+Sprint 2.12B per
+`docs/23-minimum-mobile-child-experience-architecture-decision.md`.

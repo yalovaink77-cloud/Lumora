@@ -741,7 +741,8 @@ Deferred:
 - Pregnancy `displayName` update/rename UX (no update endpoint today)
 - any future medical or date fields only through ADR-014 review triggers
 - Child UI after ADR-023 / Sprint 2.12B
-  (`docs/23-minimum-mobile-child-experience-architecture-decision.md`)
+  (`docs/23-minimum-mobile-child-experience-architecture-decision.md`) —
+  implemented
 
 ---
 
@@ -826,5 +827,7 @@ truthful substitute.
 
 ## 20.7 Next truthful UI checkpoint
 
-Minimum Child mobile list/create/detail architecture (documentation-first),
-only after ADR-aligned Pregnancy UI is complete — do not begin that sprint here.
+Minimum Child mobile list/create/detail/displayName-edit is implemented in
+Sprint 2.12B per
+`docs/23-minimum-mobile-child-experience-architecture-decision.md`.
+Minimum Timeline mobile architecture remains the next documentation-first gate.

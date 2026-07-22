@@ -1332,7 +1332,5 @@ create/read verticals.
 
 Both `OWNER` and `MEMBER` retain create/list/direct-get/`displayName` mutation
 access under ADR-017. The minimum mobile Child
-list/create/detail/displayName-edit experience is architecturally approved in
-Sprint 2.12A per
-`docs/23-minimum-mobile-child-experience-architecture-decision.md`
-(implementation Sprint 2.12B).
+list/create/detail/displayName-edit experience is implemented in Sprint 2.12B
+per `docs/23-minimum-mobile-child-experience-architecture-decision.md`.

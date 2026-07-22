@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthSessionProvider } from "../src/auth/auth-session-context";
+import { ChildProvider } from "../src/child/ChildProvider";
 import { FamilyProvider } from "../src/family/FamilyProvider";
 import { PregnancyProvider } from "../src/pregnancy/PregnancyProvider";
 
@@ -14,8 +15,10 @@ export default function RootLayout() {
         <AuthSessionProvider>
           <FamilyProvider>
             <PregnancyProvider>
-              <StatusBar style="auto" />
-              <Stack screenOptions={{ headerShown: false }} />
+              <ChildProvider>
+                <StatusBar style="auto" />
+                <Stack screenOptions={{ headerShown: false }} />
+              </ChildProvider>
             </PregnancyProvider>
           </FamilyProvider>
         </AuthSessionProvider>

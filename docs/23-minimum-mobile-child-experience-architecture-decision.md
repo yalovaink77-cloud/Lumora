@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Client Not Implemented)
+Status: Approved — Implemented (Sprint 2.12B)
 
 Phase: MVP Client Child Foundation
 
@@ -756,3 +756,71 @@ Sprint 2.12A documents:
 
 No application code, dependencies, lockfiles, schema, migrations, or tests are
 changed by this sprint.
+
+---
+
+# 20. Sprint 2.12B Completion Record
+
+Sprint 2.12B implements the minimum Family-scoped Child experience in
+`apps/mobile` against existing Child API contracts only.
+
+## 20.1 Routes and Family detail entry
+
+- `/(app)/families/[familyId]/children` — Family-scoped list, pull-to-refresh,
+  empty state, create entry
+- `/(app)/families/[familyId]/children/create` — `displayName` only, Unicode
+  code-point validation mirroring the server (max 80)
+- `/(app)/families/[familyId]/children/[childId]` — direct-get detail; generic
+  unavailable UI for `CHILD_NOT_FOUND`
+- `/(app)/families/[familyId]/children/[childId]/edit` — dedicated
+  displayName edit; pessimistic PATCH; success returns to detail
+- Family detail provides accessible Pregnancies and Children entries
+- Routes remain inside `(app)` and inherit authentication + disclosure guards
+
+## 20.2 Child API client behavior
+
+- Cookie session via Better Auth Expo `getCookie()` + validated API base URL
+- Nested Family/Child paths; path-encoded identifiers
+- Exact DTO mapping with response `familyId` consistency checks
+- `AbortController` + 15s bounded timeout
+- Distinguishes unauthorized, `FAMILY_NOT_FOUND`, `CHILD_NOT_FOUND`,
+  validation, network, server, malformed, and aborted results
+- Unauthorized clears Child process-memory state and uses the central session
+  sign-out boundary
+- No sensitive logging; no shared HTTP helper SDK extraction was required
+
+## 20.3 Process-memory Family-scoped state
+
+- Server remains authoritative; no AsyncStorage/SecureStore Child persistence
+- State scoped by `familyId`; cleared on sign-out, principal change, and Family
+  context change
+- Stale in-flight responses ignored
+- Create refreshes list without optimistic insert
+- displayName update pessimistically synchronizes list/detail using the
+  returned DTO, including refreshed `updatedAt` for same-value updates
+
+## 20.4 Heightened privacy presentation
+
+- `displayName` remains a user-provided presentation label only
+- No legal name, birth date, age, gender, guardian, Pregnancy linkage,
+  Timeline, Health, or AI controls
+- Child data does not enter principal/session state
+
+## 20.5 Verification performed
+
+- Mobile lint, type-check, tests, Expo shell verification, and workspace
+  verification suite for this sprint
+- Android/iOS static `expo export` validation where applicable
+- Prisma schema/migrations and backend Child API contracts unchanged
+
+## 20.6 Device / emulator smoke
+
+No safe existing Android emulator, iOS simulator, or connected device was
+available for interactive smoke in this environment. Interactive smoke is
+therefore not claimed. Static Android/iOS bundle validation remains the
+truthful substitute.
+
+## 20.7 Next truthful UI checkpoint
+
+Minimum Timeline mobile experience architecture (documentation-first), only
+after ADR-aligned Child UI is complete — do not begin that sprint here.

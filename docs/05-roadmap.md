@@ -61,9 +61,9 @@
   `apps/mobile` (Sprint 2.11B) per
   `docs/22-minimum-mobile-pregnancy-experience-architecture-decision.md`.
 - The minimum mobile Child list/create/detail/displayName-edit experience is
-  architecturally approved (Sprint 2.12A) in
-  `docs/23-minimum-mobile-child-experience-architecture-decision.md`, with
-  client implementation planned as Sprint 2.12B before Timeline UI.
+  implemented in `apps/mobile` (Sprint 2.12B) per
+  `docs/23-minimum-mobile-child-experience-architecture-decision.md`, before
+  Timeline UI.
 
 ## 4. Beta Phase
 

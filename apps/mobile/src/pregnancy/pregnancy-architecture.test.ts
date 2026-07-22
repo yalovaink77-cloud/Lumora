@@ -25,14 +25,11 @@ function collectSourceFiles(directory: string): string[] {
   return files;
 }
 
-test("Family detail provides Pregnancies entry without Child/Timeline controls", () => {
+test("Family detail provides Pregnancies entry without Timeline controls", () => {
   const detail = read("app/(app)/families/[familyId].tsx");
   assert.match(detail, /Open Pregnancies/);
   assert.match(detail, /\/pregnancies/);
-  assert.doesNotMatch(
-    detail,
-    /Open Child|Open Timeline|href=.*\/children|href=.*\/timeline/i,
-  );
+  assert.doesNotMatch(detail, /Open Timeline|href=.*\/timeline/i);
 });
 
 test("approved nested Pregnancy routes exist under authenticated app group", () => {
