@@ -199,6 +199,24 @@ async function createChild(
   });
 }
 
+async function updateChildDisplayName(
+  baseUrl: string,
+  familyId: string,
+  childId: string,
+  cookie: string,
+  body: unknown,
+): Promise<Response> {
+  return fetch(`${baseUrl}/families/${familyId}/children/${childId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(10_000),
+  });
+}
+
 type ChildResponse = {
   id: string;
   familyId: string;
@@ -267,6 +285,9 @@ test("Child runtime enforces validation, scoped authorization, and privacy", asy
       }),
       fetch(`${baseUrl}/families/${unknownFamilyId}/children`),
       fetch(`${baseUrl}/families/${unknownFamilyId}/children/${randomUUID()}`),
+      updateChildDisplayName(baseUrl, unknownFamilyId, randomUUID(), "", {
+        displayName: "Private Mutation",
+      }),
     ]);
 
     for (const response of unauthenticatedResponses) {
@@ -465,6 +486,126 @@ test("Child runtime enforces validation, scoped authorization, and privacy", asy
     assert.deepEqual(directChild, maximumChild);
     sensitiveResponseTexts.push(directText);
 
+    const mutationInvalidCases = [
+      [{}, "DISPLAY_NAME_REQUIRED"],
+      [{ displayName: 42 }, "DISPLAY_NAME_INVALID"],
+      [{ displayName: "" }, "DISPLAY_NAME_REQUIRED"],
+      [{ displayName: " \t " }, "DISPLAY_NAME_REQUIRED"],
+      [{ displayName: "🌿".repeat(81) }, "DISPLAY_NAME_TOO_LONG"],
+      [{ displayName: "Mutation", id: maximumChild.id }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", familyId: secondFamilyId }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", childId: randomUUID() }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", updatedAt: new Date() }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", userId: secondUser.userId }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", guardianId: randomUUID() }, "UNKNOWN_FIELD"],
+      [{ displayName: "Mutation", pregnancyId: randomUUID() }, "UNKNOWN_FIELD"],
+    ] as const;
+
+    for (const [body, code] of mutationInvalidCases) {
+      const response = await updateChildDisplayName(
+        baseUrl,
+        firstFamilyId,
+        maximumChild.id,
+        firstUser.cookie,
+        body,
+      );
+      const responseBody = (await response.json()) as {
+        code?: string;
+        message?: string;
+      };
+
+      assert.equal(response.status, 400);
+      assert.equal(responseBody.code, code);
+      assert.equal(
+        responseBody.message,
+        "Invalid child display name update request.",
+      );
+    }
+
+    const persistedBeforeMutation = await prisma.child.findUniqueOrThrow({
+      where: {
+        id: maximumChild.id,
+      },
+    });
+    const trimmedUpdateResponse = await updateChildDisplayName(
+      baseUrl,
+      firstFamilyId,
+      maximumChild.id,
+      firstUser.cookie,
+      {
+        displayName: "  Güncel Etiket 🌿  ",
+      },
+    );
+    const trimmedUpdateText = await trimmedUpdateResponse.text();
+    const trimmedUpdate = JSON.parse(trimmedUpdateText) as ChildResponse;
+
+    assert.equal(trimmedUpdateResponse.status, 200);
+    assertChildShape(trimmedUpdate);
+    assert.equal(trimmedUpdate.id, maximumChild.id);
+    assert.equal(trimmedUpdate.familyId, firstFamilyId);
+    assert.equal(trimmedUpdate.displayName, "Güncel Etiket 🌿");
+    assert.equal(trimmedUpdate.createdAt, maximumChild.createdAt);
+    assert.notEqual(trimmedUpdate.updatedAt, maximumChild.updatedAt);
+    sensitiveResponseTexts.push(trimmedUpdateText);
+
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const sameValueResponse = await updateChildDisplayName(
+      baseUrl,
+      firstFamilyId,
+      maximumChild.id,
+      firstUser.cookie,
+      {
+        displayName: "Güncel Etiket 🌿",
+      },
+    );
+    const sameValueText = await sameValueResponse.text();
+    const sameValueUpdate = JSON.parse(sameValueText) as ChildResponse;
+
+    assert.equal(sameValueResponse.status, 200);
+    assertChildShape(sameValueUpdate);
+    assert.equal(sameValueUpdate.displayName, "Güncel Etiket 🌿");
+    assert.notEqual(sameValueUpdate.updatedAt, trimmedUpdate.updatedAt);
+    sensitiveResponseTexts.push(sameValueText);
+
+    const duplicateUpdateResponse = await updateChildDisplayName(
+      baseUrl,
+      firstFamilyId,
+      maximumChild.id,
+      firstUser.cookie,
+      {
+        displayName: "Deniz 🌿",
+      },
+    );
+    const duplicateUpdate =
+      (await duplicateUpdateResponse.json()) as ChildResponse;
+
+    assert.equal(duplicateUpdateResponse.status, 200);
+    assert.equal(duplicateUpdate.displayName, "Deniz 🌿");
+    assert.equal(
+      await prisma.child.count({
+        where: {
+          familyId: firstFamilyId,
+          displayName: "Deniz 🌿",
+        },
+      }),
+      3,
+    );
+
+    const persistedAfterMutation = await prisma.child.findUniqueOrThrow({
+      where: {
+        id: maximumChild.id,
+      },
+    });
+    assert.equal(persistedAfterMutation.id, persistedBeforeMutation.id);
+    assert.equal(
+      persistedAfterMutation.familyId,
+      persistedBeforeMutation.familyId,
+    );
+    assert.equal(
+      persistedAfterMutation.createdAt.toISOString(),
+      persistedBeforeMutation.createdAt.toISOString(),
+    );
+
     const inaccessibleCreate = await createChild(
       baseUrl,
       firstFamilyId,
@@ -541,6 +682,67 @@ test("Child runtime enforces validation, scoped authorization, and privacy", asy
     }
     assert.equal(new Set(hiddenBodies).size, 1);
 
+    const hiddenMutationResponses = await Promise.all([
+      updateChildDisplayName(
+        baseUrl,
+        firstFamilyId,
+        maximumChild.id,
+        secondUser.cookie,
+        {
+          displayName: "Inaccessible Mutation",
+        },
+      ),
+      updateChildDisplayName(
+        baseUrl,
+        firstFamilyId,
+        randomUUID(),
+        firstUser.cookie,
+        {
+          displayName: "Missing Mutation",
+        },
+      ),
+      updateChildDisplayName(
+        baseUrl,
+        otherFirstUserFamilyId,
+        maximumChild.id,
+        firstUser.cookie,
+        {
+          displayName: "Mismatched Mutation",
+        },
+      ),
+      updateChildDisplayName(
+        baseUrl,
+        unknownFamilyId,
+        randomUUID(),
+        firstUser.cookie,
+        {
+          displayName: "Missing Family Mutation",
+        },
+      ),
+    ]);
+    const hiddenMutationBodies: string[] = [];
+
+    for (const response of hiddenMutationResponses) {
+      assert.equal(response.status, 404);
+      hiddenMutationBodies.push(await response.text());
+    }
+    assert.equal(new Set(hiddenMutationBodies).size, 1);
+    assert.deepEqual(JSON.parse(hiddenMutationBodies[0] ?? "{}"), {
+      statusCode: 404,
+      code: "CHILD_NOT_FOUND",
+      message: "Child not found.",
+    });
+    assert.equal(
+      (
+        await prisma.child.findUniqueOrThrow({
+          where: {
+            id: maximumChild.id,
+          },
+        })
+      ).displayName,
+      "Deniz 🌿",
+    );
+
     const countBeforeRejectedCreate = await prisma.child.count();
     assert.equal(
       await repository.createChildForMember({
@@ -552,13 +754,70 @@ test("Child runtime enforces validation, scoped authorization, and privacy", asy
     );
     assert.equal(await prisma.child.count(), countBeforeRejectedCreate);
     assert.equal(
+      await repository.updateChildDisplayNameForMember({
+        familyId: firstFamilyId,
+        childId: maximumChild.id,
+        userId: secondUser.userId,
+        displayName: "Rejected Repository Mutation",
+      }),
+      null,
+    );
+    assert.equal(
+      (
+        await prisma.child.findUniqueOrThrow({
+          where: {
+            id: maximumChild.id,
+          },
+        })
+      ).displayName,
+      "Deniz 🌿",
+    );
+    assert.equal(
       await prisma.child.count({
         where: {
           familyId: firstFamilyId,
           displayName: "Deniz 🌿",
         },
       }),
-      2,
+      3,
+    );
+
+    const concurrentLabels = ["Concurrent Alpha", "Concurrent Beta"] as const;
+    const concurrentResponses = await Promise.all(
+      concurrentLabels.map((displayName) =>
+        updateChildDisplayName(
+          baseUrl,
+          otherFirstUserFamilyId,
+          otherFamilyChild.id,
+          firstUser.cookie,
+          {
+            displayName,
+          },
+        ),
+      ),
+    );
+    const concurrentUpdates = await Promise.all(
+      concurrentResponses.map(async (response) => {
+        assert.equal(response.status, 200);
+        const updated = (await response.json()) as ChildResponse;
+        assertChildShape(updated);
+        return updated;
+      }),
+    );
+
+    assert.deepEqual(
+      new Set(concurrentUpdates.map((child) => child.displayName)),
+      new Set(concurrentLabels),
+    );
+    const concurrentPersisted = await prisma.child.findUniqueOrThrow({
+      where: {
+        id: otherFamilyChild.id,
+      },
+    });
+    assert.ok(
+      concurrentLabels.includes(
+        concurrentPersisted.displayName as (typeof concurrentLabels)[number],
+      ),
     );
 
     await assert.rejects(() =>
@@ -606,6 +865,15 @@ test("Child runtime enforces validation, scoped authorization, and privacy", asy
     assert.ok(!processOutput.includes(secondPassword));
     assert.ok(!processOutput.includes(firstUser.rawToken));
     assert.ok(!processOutput.includes(secondUser.rawToken));
+    for (const childLabel of [
+      "Güncel Etiket 🌿",
+      "Concurrent Alpha",
+      "Concurrent Beta",
+      "Inaccessible Mutation",
+      "Mismatched Mutation",
+    ]) {
+      assert.ok(!processOutput.includes(childLabel));
+    }
   } finally {
     await stopProcess(apiProcess);
 

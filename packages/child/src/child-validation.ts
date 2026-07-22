@@ -15,11 +15,23 @@ export class ChildValidationError extends Error {
   }
 }
 
+export class ChildMutationValidationError extends ChildValidationError {
+  constructor(code: ChildValidationCode) {
+    super(code);
+    this.message = "Invalid child display name update request.";
+    this.name = "ChildMutationValidationError";
+  }
+}
+
 export type CreateChildInput = {
   displayName: string;
 };
 
-const createChildInputSchema = z.strictObject({
+export type UpdateChildDisplayNameInput = {
+  displayName: string;
+};
+
+const childDisplayNameInputSchema = z.strictObject({
   displayName: z
     .string()
     .transform((value) => value.trim())
@@ -42,24 +54,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-export function parseCreateChildInput(value: unknown): CreateChildInput {
+function parseChildDisplayNameInput(
+  value: unknown,
+  errorFactory: (code: ChildValidationCode) => ChildValidationError,
+): { displayName: string } {
   if (!isRecord(value)) {
-    throw new ChildValidationError("DISPLAY_NAME_REQUIRED");
+    throw errorFactory("DISPLAY_NAME_REQUIRED");
   }
 
   if (Object.keys(value).some((key) => key !== "displayName")) {
-    throw new ChildValidationError("UNKNOWN_FIELD");
+    throw errorFactory("UNKNOWN_FIELD");
   }
 
   if (!Object.hasOwn(value, "displayName")) {
-    throw new ChildValidationError("DISPLAY_NAME_REQUIRED");
+    throw errorFactory("DISPLAY_NAME_REQUIRED");
   }
 
   if (typeof value.displayName !== "string") {
-    throw new ChildValidationError("DISPLAY_NAME_INVALID");
+    throw errorFactory("DISPLAY_NAME_INVALID");
   }
 
-  const result = createChildInputSchema.safeParse(value);
+  const result = childDisplayNameInputSchema.safeParse(value);
 
   if (result.success) {
     return result.data;
@@ -67,10 +82,26 @@ export function parseCreateChildInput(value: unknown): CreateChildInput {
 
   const validationCode = result.error.issues[0]?.message;
 
-  throw new ChildValidationError(
+  throw errorFactory(
     validationCode === "DISPLAY_NAME_REQUIRED" ||
       validationCode === "DISPLAY_NAME_TOO_LONG"
       ? validationCode
       : "DISPLAY_NAME_INVALID",
+  );
+}
+
+export function parseCreateChildInput(value: unknown): CreateChildInput {
+  return parseChildDisplayNameInput(
+    value,
+    (code) => new ChildValidationError(code),
+  );
+}
+
+export function parseUpdateChildDisplayNameInput(
+  value: unknown,
+): UpdateChildDisplayNameInput {
+  return parseChildDisplayNameInput(
+    value,
+    (code) => new ChildMutationValidationError(code),
   );
 }

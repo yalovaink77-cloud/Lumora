@@ -3,8 +3,10 @@ import { test } from "node:test";
 
 import {
   CHILD_DISPLAY_NAME_MAX_LENGTH,
+  ChildMutationValidationError,
   ChildValidationError,
   parseCreateChildInput,
+  parseUpdateChildDisplayNameInput,
 } from "./child-validation";
 
 function assertValidationCode(input: unknown, expectedCode: string): void {
@@ -12,6 +14,19 @@ function assertValidationCode(input: unknown, expectedCode: string): void {
     () => parseCreateChildInput(input),
     (error: unknown) =>
       error instanceof ChildValidationError && error.code === expectedCode,
+  );
+}
+
+function assertMutationValidationCode(
+  input: unknown,
+  expectedCode: string,
+): void {
+  assert.throws(
+    () => parseUpdateChildDisplayNameInput(input),
+    (error: unknown) =>
+      error instanceof ChildMutationValidationError &&
+      error.code === expectedCode &&
+      error.message === "Invalid child display name update request.",
   );
 }
 
@@ -70,6 +85,66 @@ test("rejects ownership, identity, and all other unknown fields", () => {
     "updatedAt",
   ]) {
     assertValidationCode(
+      {
+        displayName: "Deniz",
+        [field]: "client-supplied",
+      },
+      "UNKNOWN_FIELD",
+    );
+  }
+});
+
+test("mutation trims valid Unicode and enforces the 80-code-point boundary", () => {
+  assert.deepEqual(
+    parseUpdateChildDisplayNameInput({
+      displayName: "  Yeni Etiket 🌿  ",
+    }),
+    {
+      displayName: "Yeni Etiket 🌿",
+    },
+  );
+
+  const exactMaximum = "🌿".repeat(CHILD_DISPLAY_NAME_MAX_LENGTH);
+  assert.equal(
+    parseUpdateChildDisplayNameInput({
+      displayName: exactMaximum,
+    }).displayName,
+    exactMaximum,
+  );
+  assertMutationValidationCode(
+    {
+      displayName: `${exactMaximum}🌿`,
+    },
+    "DISPLAY_NAME_TOO_LONG",
+  );
+});
+
+test("mutation rejects missing, invalid, empty, and unknown fields", () => {
+  assertMutationValidationCode({}, "DISPLAY_NAME_REQUIRED");
+  assertMutationValidationCode({ displayName: 42 }, "DISPLAY_NAME_INVALID");
+  assertMutationValidationCode({ displayName: "" }, "DISPLAY_NAME_REQUIRED");
+  assertMutationValidationCode(
+    { displayName: " \t\n " },
+    "DISPLAY_NAME_REQUIRED",
+  );
+
+  for (const field of [
+    "id",
+    "familyId",
+    "childId",
+    "createdAt",
+    "updatedAt",
+    "userId",
+    "role",
+    "guardianId",
+    "ownerId",
+    "legalName",
+    "birthDate",
+    "gender",
+    "medicalId",
+    "pregnancyId",
+  ]) {
+    assertMutationValidationCode(
       {
         displayName: "Deniz",
         [field]: "client-supplied",

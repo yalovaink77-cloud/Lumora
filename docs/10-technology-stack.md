@@ -385,10 +385,15 @@ Implementation (Sprint 2.6B):
 - Endpoints: `POST /families/:familyId/children`,
   `GET /families/:familyId/children`, and
   `GET /families/:familyId/children/:childId`
+- Mutation (Sprint 2.6D):
+  `PATCH /families/:familyId/children/:childId` changes only normalized
+  `displayName` and system-managed `updatedAt`
 - Authorization: neutral authenticated User identifier plus persisted
   FamilyMembership scope on every persistence operation
 - Creation race safety: membership authorization and Child persistence run in
   one serializable Prisma transaction
+- Mutation race safety: membership-scoped lookup and update run in one
+  serializable Prisma transaction with bounded write-conflict retries
 - Privacy: `displayName` remains heightened-privacy Child data and responses are
   limited to the minimum Child representation
 - PostgreSQL verification: `pnpm test:child:postgres` builds the repository,

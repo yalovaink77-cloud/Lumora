@@ -6,6 +6,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from "@nestjs/common";
@@ -104,5 +105,38 @@ export class ChildController {
     }
 
     return toChildResponse(child);
+  }
+
+  @Patch(":childId")
+  async updateChildDisplayName(
+    @Param("familyId") familyId: string,
+    @Param("childId") childId: string,
+    @Body() input: unknown,
+    @CurrentPrincipal() principal: AuthenticatedPrincipal,
+  ): Promise<ChildResponse> {
+    try {
+      const child = await this.childService.updateChildDisplayName(
+        familyId,
+        childId,
+        principal.id,
+        input,
+      );
+
+      if (!child) {
+        throw new NotFoundException(childNotFoundResponse);
+      }
+
+      return toChildResponse(child);
+    } catch (error: unknown) {
+      if (error instanceof ChildValidationError) {
+        throw new BadRequestException({
+          statusCode: 400,
+          code: error.code,
+          message: error.message,
+        });
+      }
+
+      throw error;
+    }
   }
 }

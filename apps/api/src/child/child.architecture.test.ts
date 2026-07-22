@@ -77,7 +77,22 @@ test("Child authorization and creation share a serializable transaction", () => 
   assert.match(repository, /familyId_userId/);
 });
 
-test("Child HTTP composition exposes no update or deletion operation", () => {
+test("Child persistence scopes mutation atomically without upsert", () => {
+  const repository = readFileSync(
+    join(repositoryRoot, "packages/database/src/prisma-child.repository.ts"),
+    "utf8",
+  );
+
+  assert.match(repository, /updateChildDisplayNameForMember/);
+  assert.match(repository, /child\.findFirst/);
+  assert.match(repository, /memberships/);
+  assert.match(repository, /child\.update/);
+  assert.match(repository, /isolationLevel: "Serializable"/);
+  assert.match(repository, /P2034/);
+  assert.doesNotMatch(repository, /child\.upsert/);
+});
+
+test("Child HTTP composition exposes only the approved mutation operation", () => {
   const controller = readFileSync(
     join(repositoryRoot, "apps/api/src/child/child.controller.ts"),
     "utf8",
@@ -86,5 +101,7 @@ test("Child HTTP composition exposes no update or deletion operation", () => {
   assert.match(controller, /@Post\(\)/);
   assert.match(controller, /@Get\(\)/);
   assert.match(controller, /@Get\(":childId"\)/);
-  assert.doesNotMatch(controller, /@Put|@Patch|@Delete/);
+  assert.match(controller, /@Patch\(":childId"\)/);
+  assert.equal(controller.match(/@Patch/g)?.length, 1);
+  assert.doesNotMatch(controller, /@Put|@Delete/);
 });

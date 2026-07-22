@@ -4,6 +4,7 @@ import { test } from "node:test";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import {
   type ChildApplicationService,
+  ChildMutationValidationError,
   ChildValidationError,
 } from "@lumora/child";
 
@@ -183,6 +184,129 @@ test("maps Child validation failures to safe HTTP 400 responses", async () => {
         code: "UNKNOWN_FIELD",
         message: "Invalid child creation request.",
       });
+      return true;
+    },
+  );
+});
+
+test("updates a Child displayName from route scope and neutral principal", async () => {
+  let receivedFamilyId = "";
+  let receivedChildId = "";
+  let receivedUserId = "";
+  let receivedInput: unknown;
+  const updatedAt = new Date("2026-07-22T13:00:00.000Z");
+  const service = {
+    updateChildDisplayName: async (
+      familyId: string,
+      childId: string,
+      userId: string,
+      input: unknown,
+    ) => {
+      receivedFamilyId = familyId;
+      receivedChildId = childId;
+      receivedUserId = userId;
+      receivedInput = input;
+
+      return {
+        id: childId,
+        familyId,
+        displayName: "Yeni Etiket",
+        createdAt: now,
+        updatedAt,
+      };
+    },
+  } as unknown as ChildApplicationService;
+  const controller = new ChildController(service);
+
+  const response = await controller.updateChildDisplayName(
+    "family-1",
+    "child-1",
+    {
+      displayName: "Yeni Etiket",
+    },
+    principal,
+  );
+
+  assert.equal(receivedFamilyId, "family-1");
+  assert.equal(receivedChildId, "child-1");
+  assert.equal(receivedUserId, "authenticated-user");
+  assert.deepEqual(receivedInput, {
+    displayName: "Yeni Etiket",
+  });
+  assert.deepEqual(response, {
+    id: "child-1",
+    familyId: "family-1",
+    displayName: "Yeni Etiket",
+    createdAt: now.toISOString(),
+    updatedAt: updatedAt.toISOString(),
+  });
+});
+
+test("maps every unavailable mutation target to CHILD_NOT_FOUND", async () => {
+  const service = {
+    updateChildDisplayName: async () => null,
+  } as unknown as ChildApplicationService;
+  const controller = new ChildController(service);
+
+  for (const [familyId, childId] of [
+    ["unknown-family", "unknown-child"],
+    ["inaccessible-family", "inaccessible-child"],
+    ["family-1", "missing-child"],
+    ["family-2", "child-from-family-1"],
+  ] as const) {
+    await assert.rejects(
+      () =>
+        controller.updateChildDisplayName(
+          familyId,
+          childId,
+          {
+            displayName: "Yeni Etiket",
+          },
+          principal,
+        ),
+      (error: unknown) => {
+        assert.ok(error instanceof NotFoundException);
+        assert.deepEqual(error.getResponse(), {
+          statusCode: 404,
+          code: "CHILD_NOT_FOUND",
+          message: "Child not found.",
+        });
+        return true;
+      },
+    );
+  }
+});
+
+test("maps mutation validation failures without echoing Child data", async () => {
+  const service = {
+    updateChildDisplayName: async () => {
+      throw new ChildMutationValidationError("UNKNOWN_FIELD");
+    },
+  } as unknown as ChildApplicationService;
+  const controller = new ChildController(service);
+
+  await assert.rejects(
+    () =>
+      controller.updateChildDisplayName(
+        "family-1",
+        "child-1",
+        {
+          displayName: "Private Label",
+          familyId: "family-2",
+        },
+        principal,
+      ),
+    (error: unknown) => {
+      assert.ok(error instanceof BadRequestException);
+      assert.deepEqual(error.getResponse(), {
+        statusCode: 400,
+        code: "UNKNOWN_FIELD",
+        message: "Invalid child display name update request.",
+      });
+      assert.doesNotMatch(
+        JSON.stringify(error.getResponse()),
+        /Private Label|family-2/,
+      );
       return true;
     },
   );

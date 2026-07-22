@@ -12,6 +12,13 @@ export type CreateChildPersistenceInput = {
   displayName: string;
 };
 
+export type UpdateChildDisplayNamePersistenceInput = {
+  familyId: string;
+  childId: string;
+  userId: string;
+  displayName: string;
+};
+
 export interface ChildRepository {
   createChildForMember(
     input: CreateChildPersistenceInput,
@@ -24,5 +31,8 @@ export interface ChildRepository {
     familyId: string,
     childId: string,
     userId: string,
+  ): Promise<Child | null>;
+  updateChildDisplayNameForMember(
+    input: UpdateChildDisplayNamePersistenceInput,
   ): Promise<Child | null>;
 }

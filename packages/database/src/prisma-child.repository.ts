@@ -2,6 +2,7 @@ import type {
   Child,
   ChildRepository,
   CreateChildPersistenceInput,
+  UpdateChildDisplayNamePersistenceInput,
 } from "@lumora/child";
 
 import { getPrismaClient } from "./prisma-client";
@@ -14,6 +15,8 @@ type ChildRecord = {
   updatedAt: Date;
 };
 
+const MAX_SERIALIZABLE_WRITE_ATTEMPTS = 3;
+
 function toChild(record: ChildRecord): Child {
   return {
     id: record.id,
@@ -22,6 +25,38 @@ function toChild(record: ChildRecord): Child {
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
   };
+}
+
+function isSerializableWriteConflict(error: unknown): boolean {
+  return (
+    error !== null &&
+    typeof error === "object" &&
+    "code" in error &&
+    error.code === "P2034"
+  );
+}
+
+async function retrySerializableWrite<T>(
+  operation: () => Promise<T>,
+): Promise<T> {
+  for (
+    let attempt = 1;
+    attempt <= MAX_SERIALIZABLE_WRITE_ATTEMPTS;
+    attempt += 1
+  ) {
+    try {
+      return await operation();
+    } catch (error: unknown) {
+      if (
+        !isSerializableWriteConflict(error) ||
+        attempt === MAX_SERIALIZABLE_WRITE_ATTEMPTS
+      ) {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error("Serializable Child write retry limit was exhausted.");
 }
 
 export class PrismaChildRepository implements ChildRepository {
@@ -104,5 +139,50 @@ export class PrismaChildRepository implements ChildRepository {
     });
 
     return child ? toChild(child) : null;
+  }
+
+  async updateChildDisplayNameForMember(
+    input: UpdateChildDisplayNamePersistenceInput,
+  ): Promise<Child | null> {
+    return retrySerializableWrite(() =>
+      getPrismaClient().$transaction(
+        async (transaction) => {
+          const child = await transaction.child.findFirst({
+            where: {
+              id: input.childId,
+              familyId: input.familyId,
+              family: {
+                memberships: {
+                  some: {
+                    userId: input.userId,
+                  },
+                },
+              },
+            },
+            select: {
+              id: true,
+            },
+          });
+
+          if (!child) {
+            return null;
+          }
+
+          const updatedChild = await transaction.child.update({
+            where: {
+              id: child.id,
+            },
+            data: {
+              displayName: input.displayName,
+            },
+          });
+
+          return toChild(updatedChild);
+        },
+        {
+          isolationLevel: "Serializable",
+        },
+      ),
+    );
   }
 }

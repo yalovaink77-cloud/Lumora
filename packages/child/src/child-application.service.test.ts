@@ -6,10 +6,12 @@ import type {
   Child,
   ChildRepository,
   CreateChildPersistenceInput,
+  UpdateChildDisplayNamePersistenceInput,
 } from "./child.types";
 
 class RecordingChildRepository implements ChildRepository {
   readonly createInputs: CreateChildPersistenceInput[] = [];
+  readonly updateInputs: UpdateChildDisplayNamePersistenceInput[] = [];
 
   async createChildForMember(
     input: CreateChildPersistenceInput,
@@ -32,6 +34,20 @@ class RecordingChildRepository implements ChildRepository {
 
   async findChildForMember(): Promise<Child | null> {
     return null;
+  }
+
+  async updateChildDisplayNameForMember(
+    input: UpdateChildDisplayNamePersistenceInput,
+  ): Promise<Child> {
+    this.updateInputs.push(input);
+
+    return {
+      id: input.childId,
+      familyId: input.familyId,
+      displayName: input.displayName,
+      createdAt: new Date("2026-07-22T00:00:00.000Z"),
+      updatedAt: new Date("2026-07-22T01:00:00.000Z"),
+    };
   }
 }
 
@@ -69,6 +85,30 @@ test("allows duplicate displayName values in one Family", async () => {
   assert.equal(repository.createInputs[1]?.displayName, "Deniz");
 });
 
+test("updates only a normalized displayName in authenticated Family scope", async () => {
+  const repository = new RecordingChildRepository();
+  const service = new ChildApplicationService(repository);
+
+  const child = await service.updateChildDisplayName(
+    "family-1",
+    "child-1",
+    "authenticated-user",
+    {
+      displayName: "  Yeni Etiket 🌿  ",
+    },
+  );
+
+  assert.deepEqual(repository.updateInputs, [
+    {
+      familyId: "family-1",
+      childId: "child-1",
+      userId: "authenticated-user",
+      displayName: "Yeni Etiket 🌿",
+    },
+  ]);
+  assert.equal(child?.displayName, "Yeni Etiket 🌿");
+});
+
 test("rejects empty neutral and route identifiers", async () => {
   const service = new ChildApplicationService(new RecordingChildRepository());
 
@@ -89,5 +129,12 @@ test("rejects empty neutral and route identifiers", async () => {
   await assert.rejects(
     () => service.getChild("family-1", " ", "user-1"),
     /childId must not be empty/,
+  );
+  await assert.rejects(
+    () =>
+      service.updateChildDisplayName("family-1", "child-1", " ", {
+        displayName: "Deniz",
+      }),
+    /userId must not be empty/,
   );
 });

@@ -1,8 +1,8 @@
 # Child Domain Architecture Decision
 
-Version: 1.4
+Version: 1.5
 
-Status: Approved — Sprint 2.6B Implemented; Sprint 2.6D Ready
+Status: Approved — Sprint 2.6B and Sprint 2.6D Implemented
 
 Phase: MVP Domain Foundation
 
@@ -34,6 +34,8 @@ subject to the implementation gate in section 24.
 Version 1.4 approves the smallest safe `displayName` mutation contract without
 changing the Child entity, privacy boundary, or deferred domains. Sections 29
 through 37 define the future implementation boundary.
+
+Version 1.5 records the verified Sprint 2.6D implementation in section 38.
 
 ---
 
@@ -936,7 +938,7 @@ container.
 
 # 29. Child `displayName` Mutation Decision
 
-Child `displayName` mutation is approved for one future implementation sprint.
+Child `displayName` mutation is approved and implemented by Sprint 2.6D.
 
 The mutation changes only the normalized `displayName` and system-managed
 `updatedAt` of one existing Child. It must not:
@@ -1293,3 +1295,37 @@ Sprint 2.6D may implement only:
 Implementation may begin only if the repository is clean, this decision remains
 approved, the endpoint requires no schema change, and no excluded or unresolved
 domain behavior is introduced.
+
+---
+
+# 38. Sprint 2.6D Implementation Record
+
+Status: Implemented
+
+The minimum Child `displayName` mutation vertical is implemented within the
+existing Child boundaries:
+
+- `@lumora/child` owns strict mutation validation, normalized input, the
+  application operation, and the repository contract.
+- `@lumora/database` performs membership-scoped lookup and mutation in one
+  serializable transaction through the shared Prisma Client.
+- Serializable write conflicts receive a bounded retry.
+- `apps/api` exposes only
+  `PATCH /families/:familyId/children/:childId` and maps safe deterministic
+  outcomes.
+
+The successful HTTP response is the existing minimum Child representation. The
+operation mutates only `displayName`; Prisma refreshes system-managed
+`updatedAt`, including for a valid same-value mutation. `id`, `familyId`, and
+`createdAt` remain unchanged.
+
+Unknown, inaccessible, missing-Family, and path-mismatched targets return the
+same `CHILD_NOT_FOUND` HTTP 404 response. Validation retains the creation
+contract's trimming, Unicode, 1–80-code-point, duplicate, and strict
+unknown-field behavior while using a mutation-specific generic error message.
+
+The implementation adds no Prisma field, index, relationship, model, or
+migration. Disposable PostgreSQL verification covers mutation authorization,
+atomicity, concurrency, timestamps, isolation, privacy, cleanup, and regression
+behavior for the existing authentication, Family, Pregnancy, and Child
+create/read verticals.
