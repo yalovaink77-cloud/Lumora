@@ -7,6 +7,7 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.lumora.mobile"
@@ -14,7 +15,7 @@
     "android": {
       "package": "app.lumora.mobile"
     },
-    "plugins": ["expo-secure-store"],
+    "plugins": ["expo-router", "expo-secure-store"],
     "experiments": {
       "autolinkingModuleResolution": true
     }

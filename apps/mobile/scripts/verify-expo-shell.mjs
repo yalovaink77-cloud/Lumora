@@ -13,14 +13,35 @@ const appRoot = path.resolve(
 for (const nativeDir of ["android", "ios"]) {
   if (existsSync(path.join(appRoot, nativeDir))) {
     throw new Error(
-      `Native ${nativeDir}/ directory must not exist in Sprint 2.9B.1.`,
+      `Native ${nativeDir}/ directory must not exist for the Expo Go shell.`,
     );
+  }
+}
+
+const requiredRoutes = [
+  "app/_layout.tsx",
+  "app/index.tsx",
+  "app/(auth)/_layout.tsx",
+  "app/(auth)/sign-in.tsx",
+  "app/(auth)/register.tsx",
+  "app/(app)/_layout.tsx",
+  "app/(app)/index.tsx",
+];
+
+for (const route of requiredRoutes) {
+  if (!existsSync(path.join(appRoot, route))) {
+    throw new Error(`Missing required Expo Router file: ${route}`);
   }
 }
 
 const metroConfig = require(path.join(appRoot, "metro.config.js"));
 if (!metroConfig?.resolver) {
   throw new Error("Metro configuration failed to load.");
+}
+
+const packageJson = require(path.join(appRoot, "package.json"));
+if (packageJson.main !== "expo-router/entry") {
+  throw new Error('package.json main must be "expo-router/entry".');
 }
 
 const expoConfig = spawnSync(
@@ -61,4 +82,13 @@ if (parsed.platforms.includes("web")) {
   throw new Error("Minimum shell must not require Expo web platform.");
 }
 
-console.log("Expo foundation verification passed.");
+const plugins = parsed.plugins ?? [];
+const pluginNames = plugins.map((plugin) =>
+  Array.isArray(plugin) ? plugin[0] : plugin,
+);
+
+if (!pluginNames.includes("expo-router")) {
+  throw new Error("Expo config must include expo-router plugin.");
+}
+
+console.log("Expo authenticated shell verification passed.");

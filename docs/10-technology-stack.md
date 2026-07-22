@@ -237,8 +237,8 @@ Minimum authenticated shell architecture (Sprint 2.9B.0):
 Approved shell boundary:
 
 - Primary client: `apps/mobile`
-- Expo Router for minimum auth/app route groups (presentation deferred to
-  Sprint 2.9B.2+)
+- Expo Router for minimum auth/app route groups (shell implemented in
+  Sprint 2.9B.2; disclosure presentation deferred to Sprint 2.9B.3)
 - Better Auth Expo integration (`@better-auth/expo@1.6.23` line) with
   `expo-secure-store` cookie/session storage
 - No custom JWT/bearer client auth
@@ -256,11 +256,19 @@ Sprint 2.9B.1 foundation (implemented):
 - Validated `EXPO_PUBLIC_LUMORA_API_BASE_URL`
 - Trusted origins accept `lumora://` / `lumora://*` always, and `exp://` /
   `exp://**` only in development/test
-- Temporary technical bootstrap screen only; no auth/disclosure/Home UI
-- Device/emulator smoke not run in this sprint; static Expo config + Metro load
-  verification completed
+- Temporary technical bootstrap screen only in 2.9B.1; replaced by Expo Router
+  authenticated shell in Sprint 2.9B.2
+- Device/emulator smoke not run in 2.9B.1/2.9B.2; static Expo config + Metro
+  load verification completed
 
-Next gate: Sprint 2.9B.2 authenticated session shell screens
+Sprint 2.9B.2 authenticated shell (implemented):
+
+- Expo Router `~57.0.8` with `(auth)` / `(app)` route groups
+- Registration, sign-in, session restore, Home, sign-out
+- Neutral principal via cookie transport + `GET /auth/me`
+- Disclosure / Safety & Limitations deferred to Sprint 2.9B.3
+
+Next gate: Sprint 2.9B.3 ADR-019 disclosure surfaces
 
 ---
 
@@ -526,13 +534,13 @@ Approved boundary:
 Current verified application state:
 
 - `apps/api` is not a user-facing disclosure surface
-- `apps/mobile` currently has no authenticated UI and cannot yet satisfy the
-  approved surfaces
+- `apps/mobile` has the authenticated session shell but does not yet present
+  ADR-019 disclosure surfaces
 - Shell architecture is approved in
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
 - Sprint 2.9B.1 Expo foundation + Better Auth Expo transport is implemented
-- Next implementation unlock is Sprint 2.9B.2 (authenticated session shell);
-  disclosure presentation follows in Sprint 2.9B.3
+- Sprint 2.9B.2 authenticated session shell is implemented
+- Next implementation unlock is Sprint 2.9B.3 (ADR-019 disclosure surfaces)
 
 ---
 

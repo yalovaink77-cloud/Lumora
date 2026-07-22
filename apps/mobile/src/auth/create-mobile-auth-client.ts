@@ -15,8 +15,7 @@ export type CreateMobileAuthClientOptions = {
 export type MobileAuthClient = ReturnType<typeof createMobileAuthClient>;
 
 /**
- * Composes the Better Auth Expo client transport foundation.
- * Does not implement registration/sign-in UI or session orchestration screens.
+ * Composes the Better Auth Expo client used by the authenticated session shell.
  */
 export function createMobileAuthClient(options: CreateMobileAuthClientOptions) {
   const transport = resolveMobileAuthTransportConfig({

@@ -42,9 +42,9 @@ export type SecureStoreLike = {
 };
 
 /**
- * Clears Better Auth Expo SecureStore material for future sign-out composition.
+ * Clears Better Auth Expo SecureStore material during sign-out composition.
  * Key enumeration is owned by the Expo plugin; callers should also invoke the
- * Better Auth signOut API when the authenticated shell is implemented.
+ * Better Auth signOut API.
  */
 export async function clearMobileAuthSecureStore(
   secureStore: SecureStoreLike,

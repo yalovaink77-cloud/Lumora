@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Sprint 2.9B.1 Foundation Implemented
+Status: Approved — Sprint 2.9B.2 Authenticated Session Shell Implemented
 
 Phase: MVP Client Foundation
 
@@ -602,27 +602,25 @@ Approved sequence:
 
 1. **Sprint 2.9B.1 — Expo mobile workspace foundation and Better Auth Expo
    transport unlock** _(implemented; see §15.2)_
-2. Sprint 2.9B.2 — Authenticated session shell (registration, sign-in, restore,
-   sign-out, Home, guards) _(next implementation sprint)_
-3. Sprint 2.9B.3 — ADR-019 disclosure surfaces on the shell
+2. **Sprint 2.9B.2 — Authenticated session shell** _(implemented; see §15.3)_
+3. Sprint 2.9B.3 — ADR-019 disclosure surfaces on the shell _(next
+   implementation sprint)_
 
 ## 15.1 Exact next implementation sprint
 
-**Sprint 2.9B.2 — Authenticated session shell**
+**Sprint 2.9B.3 — ADR-019 disclosure surfaces on the shell**
 
-In scope for 2.9B.2 (against the 2.9B.1 foundation):
+In scope for 2.9B.3 (against the 2.9B.2 authenticated shell):
 
-- registration, sign-in, session restore, sign-out,
-- authenticated Home and session guards,
-- Expo Router route groups as required for the approved shell navigation,
-- Android and iOS interactive smoke against a running API.
+- first authenticated-entry disclosure presentation,
+- permanently reachable Safety & Limitations route,
+- in-memory process-lifetime disclosure-step gate before Home,
+- canonical constants from `@lumora/shared` for
+  `lumora.safety.mvp.medical-ai.v1`.
 
-Sprint 2.9B.1 foundation scope (completed; details in §15.2) included Expo
-workspace conversion, Metro monorepo config, `@better-auth/expo@1.6.23`
-client/server transport unlock, `lumora://` / development-only `exp://`
-trusted origins, validated mobile API base URL, and automated verification.
-Expo Router navigation and device smoke were deferred to 2.9B.2 because they
-are not required to prove the transport foundation.
+Sprint 2.9B.2 authenticated shell scope (completed; details in §15.3) included
+Expo Router `(auth)` / `(app)` groups, registration, sign-in, session restore,
+sign-out, Home, guards, and `/auth/me` principal confirmation.
 
 ## 15.2 Sprint 2.9B.1 Implementation Record
 
@@ -634,7 +632,7 @@ Sprint 2.9B.1 implements:
   recommendation is intentionally not adopted to avoid a mobile-only TypeScript
   6 jump while the monorepo root remains on a separate TypeScript line),
 - Metro monorepo configuration and Expo config with scheme `lumora`,
-- temporary technical bootstrap root (not the authenticated shell),
+- temporary technical bootstrap root (replaced later by the Sprint 2.9B.2 shell),
 - validated `EXPO_PUBLIC_LUMORA_API_BASE_URL`,
 - Better Auth Expo client transport composition with SecureStore-compatible
   sync storage and Lumora storage prefix,
@@ -659,8 +657,41 @@ Verification gap intentionally deferred:
   in this environment (`expo install --check` reports only the intentional
   TypeScript pin difference above).
 
-Sprint 2.9B.2 (authenticated session shell UI) is unblocked for implementation
-against this foundation.
+## 15.3 Sprint 2.9B.2 Implementation Record
+
+Sprint 2.9B.2 implements:
+
+- Expo Router entry (`expo-router/entry`) with `(auth)` and `(app)` groups,
+- registration and sign-in screens using Better Auth email/password,
+- SecureStore-backed session restore via `useSession` plus `GET /auth/me`,
+- authenticated Home showing only the neutral principal and a clear
+  non-Family-shell statement,
+- sign-out with Better Auth sign-out and Lumora SecureStore cookie/session
+  cleanup,
+- client shell states `bootstrapping` / `unauthenticated` / `authenticated` /
+  `error` with route-group guards,
+- Expo Router dependencies aligned to SDK 57 (`expo-router`, screens, safe
+  area, gesture handler, reanimated, splash screen; `react-dom` peer for
+  Expo tooling only — Expo web remains non-required).
+
+ADR-019 disclosure presentation and Safety & Limitations remain deferred to
+Sprint 2.9B.3 (authenticated users may enter Home in this sprint).
+
+Verification completed in-repo:
+
+- mobile unit/architecture tests, typecheck, lint, Expo shell verification
+  script
+- workspace lint/typecheck/test/build as applicable
+- no schema/migration changes
+- no generated `android/` or `ios/` directories
+
+Verification gap intentionally deferred:
+
+- Android emulator and iOS simulator interactive smoke against a running API
+  were not executed in this environment.
+
+Sprint 2.9B.3 (disclosure surfaces) is unblocked for implementation against
+this authenticated shell.
 
 ---
 

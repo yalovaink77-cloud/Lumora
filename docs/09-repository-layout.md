@@ -91,7 +91,9 @@ The first production client.
 The minimum authenticated Expo/React Native shell architecture is defined in
 `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`.
 Sprint 2.9B.1 established the Expo workspace foundation and Better Auth Expo
-transport unlock. Authenticated shell screens remain deferred to Sprint 2.9B.2.
+transport unlock. Sprint 2.9B.2 added the Expo Router authenticated session
+shell (registration, sign-in, restore, Home, sign-out). ADR-019 disclosure
+surfaces remain deferred to Sprint 2.9B.3.
 
 ---
 
