@@ -54,7 +54,7 @@ Lumora selected Better Auth because it best matches the platform's documented re
 - **Acquisition readiness** — A self-contained, documented authentication layer supports due diligence and controlled ownership transfer.
 - **Founder independence** — Authentication must not depend on one individual's bespoke implementation or undocumented secrets handling (see `docs/11-founder-independence-and-long-term-continuity.md`).
 - **Prisma/PostgreSQL compatibility** — Lumora's approved database stack uses PostgreSQL and Prisma through `@lumora/database`.
-- **Web and mobile compatibility** — Lumora requires authentication that can support a NestJS API, future mobile clients, and optional admin tooling without separate identity silos.
+- **Web and mobile compatibility** — Lumora requires authentication that can support a NestJS API, future mobile clients, and optional admin tooling without separate identity silos. The minimum authenticated Expo mobile shell and Better Auth Expo transport unlock are defined in `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md` without replacing cookie-backed Better Auth sessions or introducing a custom JWT client.
 - **Avoidance of homemade cryptography** — Password hashing, session handling, and credential verification must not be reinvented in application code.
 
 ---

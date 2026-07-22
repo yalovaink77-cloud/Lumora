@@ -16,7 +16,10 @@ Deliver a small, usable, private product that allows a mother to organize the es
 - Privacy-aware access control
 - Medical safety and AI disclaimers (canonical meaning approved in
   `docs/19-mvp-medical-safety-and-ai-disclaimer-architecture-decision.md`;
-  user-facing presentation remains pending a capable primary client)
+  mobile shell architecture approved in
+  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`;
+  user-facing presentation remains pending authenticated mobile shell
+  implementation)
 
 ## 3. Excluded Features
 

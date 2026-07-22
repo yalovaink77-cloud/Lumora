@@ -228,7 +228,29 @@ Primary platform:
 - iOS
 - Android
 
-Web support is optional.
+Web support is optional and is excluded from the minimum authenticated MVP
+shell.
+
+Minimum authenticated shell architecture (Sprint 2.9B.0):
+`docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`.
+
+Approved shell boundary:
+
+- Primary client: `apps/mobile`
+- Expo Router for minimum auth/app route groups
+- Better Auth Expo integration (`@better-auth/expo@1.6.23` line) with
+  `expo-secure-store` cookie/session storage
+- No custom JWT/bearer client auth
+- Canonical safety copy consumed from `@lumora/shared`
+- Expo web not required for the minimum shell
+- Native prebuild deferred unless forced by dependencies
+
+Current verified state:
+
+- `apps/mobile` is still scaffold-only
+- `@better-auth/expo` is not yet installed
+- API trusted-origin validation currently accepts only `http:` / `https:` and
+  must be extended for the app scheme during Sprint 2.9B.1
 
 ---
 
@@ -493,8 +515,11 @@ Current verified application state:
 - `apps/api` is not a user-facing disclosure surface
 - `apps/mobile` currently has no authenticated UI and cannot yet satisfy the
   approved surfaces
-- Sprint 2.9B presentation remains blocked until a capable primary client shell
-  exists
+- Shell architecture is approved in
+  `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
+- Next implementation unlock is Sprint 2.9B.1 (Expo foundation + Better Auth
+  Expo transport); disclosure presentation follows after the authenticated
+  shell exists
 
 ---
 

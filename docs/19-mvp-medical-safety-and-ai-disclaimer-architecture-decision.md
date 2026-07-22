@@ -417,22 +417,25 @@ item in section 18.
 Sprint 2.9A (this decision) is complete when this document and required
 cross-references are committed.
 
-Sprint 2.9B presentation implementation is **blocked** until the repository
-contains a primary user-facing authenticated client experience capable of:
+The minimum authenticated mobile shell architecture is now defined in
+`docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`, including
+the non-persistent first-entry presentation rule.
+
+Disclosure presentation remains **blocked** until `apps/mobile` provides:
 
 1. first authenticated application entry, and
 2. a permanently accessible Safety & Limitations location reachable without
    Family creation or sensitive Family-domain navigation.
 
-The single smallest unresolved dependency is:
+The approved implementation sequence is:
 
-**a minimal authenticated shell in `apps/mobile` (or another reviewed primary
-client) that can host the two approved disclosure surfaces.**
+1. Sprint 2.9B.1 — Expo workspace foundation and Better Auth Expo transport
+   unlock,
+2. Sprint 2.9B.2 — authenticated session shell,
+3. Sprint 2.9B.3 — ADR-019 disclosure surfaces.
 
-That shell may be introduced by Sprint 2.9B itself if scoped only to the
-minimum authenticated navigation needed for the two surfaces, or by an earlier
-client foundation sprint. Either path must remain documentation-first and must
-not invent Health, AI, or Family-domain expansion.
+The single smallest unresolved dependency for presentation is completion of
+that authenticated mobile shell sequence in `apps/mobile`.
 
 ---
 
