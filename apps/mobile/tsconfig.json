@@ -1,9 +1,12 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    "strict": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["dist", "node_modules", ".expo"]
 }

@@ -14,6 +14,10 @@ export type AuthRuntimeConfig = {
   delivery: AuthEmailVerificationDeliveryConfig;
 };
 
+export type ParseTrustedOriginsOptions = {
+  allowExpoDevelopmentOrigins?: boolean;
+};
+
 const PLACEHOLDER_SECRETS = new Set([
   "change-me",
   "changeme",
@@ -23,7 +27,32 @@ const PLACEHOLDER_SECRETS = new Set([
   "development-secret",
 ]);
 
-export function parseTrustedOrigins(rawValue: string | undefined): string[] {
+/** Production mobile application scheme origins approved by ADR-020. */
+const APPROVED_MOBILE_APP_SCHEME_ORIGINS = new Set(["lumora://", "lumora://*"]);
+
+/**
+ * Development-only Expo Go origins approved by ADR-020 / Better Auth Expo guide.
+ * These must never be accepted when NODE_ENV is production.
+ */
+const APPROVED_EXPO_DEVELOPMENT_ORIGINS = new Set(["exp://", "exp://**"]);
+
+function assertNoCredentialsQueryOrFragment(origin: string, parsed: URL): void {
+  if (
+    parsed.username.length > 0 ||
+    parsed.password.length > 0 ||
+    parsed.search.length > 0 ||
+    parsed.hash.length > 0
+  ) {
+    throw new Error(
+      `AUTH_TRUSTED_ORIGINS origin must not include credentials, query, or fragment: ${origin}`,
+    );
+  }
+}
+
+export function parseTrustedOrigins(
+  rawValue: string | undefined,
+  options: ParseTrustedOriginsOptions = {},
+): string[] {
   if (typeof rawValue !== "string" || rawValue.trim().length === 0) {
     throw new Error("AUTH_TRUSTED_ORIGINS is required but was not provided.");
   }
@@ -38,6 +67,12 @@ export function parseTrustedOrigins(rawValue: string | undefined): string[] {
   }
 
   for (const origin of origins) {
+    if (origin === "*") {
+      throw new Error(
+        "AUTH_TRUSTED_ORIGINS must not include wildcard origins.",
+      );
+    }
+
     let parsed: URL;
 
     try {
@@ -48,11 +83,41 @@ export function parseTrustedOrigins(rawValue: string | undefined): string[] {
       );
     }
 
-    if (!["http:", "https:"].includes(parsed.protocol)) {
-      throw new Error(
-        `AUTH_TRUSTED_ORIGINS origin must use http or https: ${origin}`,
-      );
+    assertNoCredentialsQueryOrFragment(origin, parsed);
+
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      continue;
     }
+
+    if (parsed.protocol === "lumora:") {
+      if (!APPROVED_MOBILE_APP_SCHEME_ORIGINS.has(origin)) {
+        throw new Error(
+          `AUTH_TRUSTED_ORIGINS mobile scheme must be exactly lumora:// or lumora://*: ${origin}`,
+        );
+      }
+
+      continue;
+    }
+
+    if (parsed.protocol === "exp:") {
+      if (!options.allowExpoDevelopmentOrigins) {
+        throw new Error(
+          "AUTH_TRUSTED_ORIGINS Expo development origins are not allowed in production.",
+        );
+      }
+
+      if (!APPROVED_EXPO_DEVELOPMENT_ORIGINS.has(origin)) {
+        throw new Error(
+          `AUTH_TRUSTED_ORIGINS Expo development origin is not approved: ${origin}`,
+        );
+      }
+
+      continue;
+    }
+
+    throw new Error(
+      `AUTH_TRUSTED_ORIGINS origin uses an unapproved scheme: ${origin}`,
+    );
   }
 
   return origins;
@@ -100,8 +165,11 @@ export function validateAuthRuntimeConfig(
     throw new Error("BETTER_AUTH_URL must use http or https.");
   }
 
-  const trustedOrigins = parseTrustedOrigins(env.AUTH_TRUSTED_ORIGINS);
   const nodeEnv = env.NODE_ENV ?? "development";
+  const allowExpoDevelopmentOrigins = ["development", "test"].includes(nodeEnv);
+  const trustedOrigins = parseTrustedOrigins(env.AUTH_TRUSTED_ORIGINS, {
+    allowExpoDevelopmentOrigins,
+  });
   const secureCookies = nodeEnv === "production";
   const deliveryMode = env.AUTH_EMAIL_VERIFICATION_DELIVERY_MODE;
   const confirmationPageUrlValue =
@@ -165,11 +233,9 @@ export function validateAuthRuntimeConfig(
     );
   }
 
-  const confirmationHostIsLoopback = [
-    "localhost",
-    "127.0.0.1",
-    "::1",
-  ].includes(confirmationPageUrl.hostname);
+  const confirmationHostIsLoopback = ["localhost", "127.0.0.1", "::1"].includes(
+    confirmationPageUrl.hostname,
+  );
 
   if (
     !secureCookies &&
@@ -184,7 +250,10 @@ export function validateAuthRuntimeConfig(
   if (secureCookies) {
     const hasLocalhostOrigin = trustedOrigins.some((origin) => {
       const parsed = new URL(origin);
-      return parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+      return (
+        (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+        (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1")
+      );
     });
 
     if (hasLocalhostOrigin) {
@@ -204,9 +273,13 @@ export function validateAuthRuntimeConfig(
     }
   }
 
-  const confirmationOriginIsTrusted = trustedOrigins.some(
-    (origin) => new URL(origin).origin === confirmationPageUrl.origin,
-  );
+  const confirmationOriginIsTrusted = trustedOrigins.some((origin) => {
+    const parsed = new URL(origin);
+    return (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      parsed.origin === confirmationPageUrl.origin
+    );
+  });
 
   if (!confirmationOriginIsTrusted) {
     throw new Error(

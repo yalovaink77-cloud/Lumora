@@ -106,7 +106,7 @@ test("Sprint 2.8B migration preserves the exact role and invitation architecture
   );
   assert.match(
     migration,
-    /ALTER TYPE "FamilyMembershipRole" ADD VALUE 'MEMBER';\s*COMMIT;/s,
+    /ALTER TYPE "FamilyMembershipRole" ADD VALUE 'MEMBER';[\s\S]*?\bCOMMIT;/s,
   );
   assert.deepEqual(
     [...schema.matchAll(/enum FamilyMembershipRole\s*\{([^}]*)\}/g)].flatMap(

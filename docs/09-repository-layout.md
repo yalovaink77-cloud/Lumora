@@ -90,8 +90,8 @@ The first production client.
 
 The minimum authenticated Expo/React Native shell architecture is defined in
 `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`.
-`apps/mobile` remains a scaffold until that decision’s implementation sprints
-land.
+Sprint 2.9B.1 established the Expo workspace foundation and Better Auth Expo
+transport unlock. Authenticated shell screens remain deferred to Sprint 2.9B.2.
 
 ---
 

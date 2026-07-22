@@ -2,11 +2,36 @@
   "name": "@lumora/mobile",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "build": "tsc -p tsconfig.json --noEmit && node ./scripts/verify-expo-foundation.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --test"
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "expo:config": "expo config --type public"
+  },
+  "dependencies": {
+    "@better-auth/expo": "1.6.23",
+    "@lumora/shared": "workspace:*",
+    "better-auth": "1.6.23",
+    "expo": "~57.0.8",
+    "expo-constants": "~57.0.7",
+    "expo-linking": "~57.0.4",
+    "expo-network": "~57.0.1",
+    "expo-secure-store": "~57.0.1",
+    "expo-status-bar": "~57.0.1",
+    "expo-web-browser": "~57.0.2",
+    "react": "19.2.3",
+    "react-native": "0.86.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/react": "~19.2.2",
+    "tsx": "^4.23.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.65.0"
   }
 }

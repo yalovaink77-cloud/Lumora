@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Lumora",
+    "slug": "lumora",
+    "scheme": "lumora",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.lumora.mobile"
+    },
+    "android": {
+      "package": "app.lumora.mobile"
+    },
+    "plugins": ["expo-secure-store"],
+    "experiments": {
+      "autolinkingModuleResolution": true
+    }
+  }
+}

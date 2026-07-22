@@ -237,7 +237,8 @@ Minimum authenticated shell architecture (Sprint 2.9B.0):
 Approved shell boundary:
 
 - Primary client: `apps/mobile`
-- Expo Router for minimum auth/app route groups
+- Expo Router for minimum auth/app route groups (presentation deferred to
+  Sprint 2.9B.2+)
 - Better Auth Expo integration (`@better-auth/expo@1.6.23` line) with
   `expo-secure-store` cookie/session storage
 - No custom JWT/bearer client auth
@@ -245,12 +246,21 @@ Approved shell boundary:
 - Expo web not required for the minimum shell
 - Native prebuild deferred unless forced by dependencies
 
-Current verified state:
+Sprint 2.9B.1 foundation (implemented):
 
-- `apps/mobile` is still scaffold-only
-- `@better-auth/expo` is not yet installed
-- API trusted-origin validation currently accepts only `http:` / `https:` and
-  must be extended for the app scheme during Sprint 2.9B.1
+- Expo SDK `~57.0.8`, React `19.2.3`, React Native `0.86.0`
+- `@better-auth/expo@1.6.23` on both `@lumora/auth` (server `expo()` plugin)
+  and `@lumora/mobile` (client transport composition)
+- `expo-secure-store@~57.0.1` with Lumora `storagePrefix`
+- App scheme `lumora`
+- Validated `EXPO_PUBLIC_LUMORA_API_BASE_URL`
+- Trusted origins accept `lumora://` / `lumora://*` always, and `exp://` /
+  `exp://**` only in development/test
+- Temporary technical bootstrap screen only; no auth/disclosure/Home UI
+- Device/emulator smoke not run in this sprint; static Expo config + Metro load
+  verification completed
+
+Next gate: Sprint 2.9B.2 authenticated session shell screens
 
 ---
 
@@ -324,6 +334,9 @@ Implementation (Sprint 2.3B):
 - Route prefix: `/api/auth`
 - Protected application endpoint: `GET /auth/me`
 - Session strategy: server-managed database sessions through Better Auth; no custom JWT foundation
+- Mobile transport unlock (Sprint 2.9B.1): `@better-auth/expo@1.6.23` server
+  plugin `expo()` plus trusted app-scheme origins (`lumora://`, development-only
+  `exp://` patterns)
 - Persistence: Better Auth models in `packages/database/prisma/schema.prisma` accessed only through `@lumora/database`
 - PostgreSQL runtime verification: `pnpm test:auth:postgres` builds the repository,
   starts an isolated disposable PostgreSQL 16 container, applies the existing
@@ -517,9 +530,9 @@ Current verified application state:
   approved surfaces
 - Shell architecture is approved in
   `docs/20-minimum-authenticated-mobile-shell-architecture-decision.md`
-- Next implementation unlock is Sprint 2.9B.1 (Expo foundation + Better Auth
-  Expo transport); disclosure presentation follows after the authenticated
-  shell exists
+- Sprint 2.9B.1 Expo foundation + Better Auth Expo transport is implemented
+- Next implementation unlock is Sprint 2.9B.2 (authenticated session shell);
+  disclosure presentation follows in Sprint 2.9B.3
 
 ---
 

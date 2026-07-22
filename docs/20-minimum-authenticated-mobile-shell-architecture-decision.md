@@ -2,7 +2,7 @@
 
 Version: 1.0
 
-Status: Approved — Documentation Complete (Client Not Implemented)
+Status: Approved — Sprint 2.9B.1 Foundation Implemented
 
 Phase: MVP Client Foundation
 
@@ -601,41 +601,66 @@ A full design system is deferred.
 Approved sequence:
 
 1. **Sprint 2.9B.1 — Expo mobile workspace foundation and Better Auth Expo
-   transport unlock** _(next implementation sprint)_
+   transport unlock** _(implemented; see §15.2)_
 2. Sprint 2.9B.2 — Authenticated session shell (registration, sign-in, restore,
-   sign-out, Home, guards)
+   sign-out, Home, guards) _(next implementation sprint)_
 3. Sprint 2.9B.3 — ADR-019 disclosure surfaces on the shell
 
 ## 15.1 Exact next implementation sprint
 
-**Sprint 2.9B.1 — Expo mobile workspace foundation and Better Auth Expo
-transport unlock**
+**Sprint 2.9B.2 — Authenticated session shell**
 
-In scope:
+In scope for 2.9B.2 (against the 2.9B.1 foundation):
 
-- convert `apps/mobile` into an Expo TypeScript app in the pnpm workspace,
-- Expo Router app skeleton with placeholder unauthenticated/authenticated
-  route groups (no Family UI),
-- Android and iOS smoke start,
-- Metro/workspace resolution for `@lumora/shared` readiness,
-- install and wire `@better-auth/expo@1.6.23` server plugin in auth
-  composition,
-- extend trusted-origin validation for `lumora://` and development-only
-  `exp://` patterns,
-- document required env examples for mobile API base URL and trusted origins,
-- and verify existing auth PostgreSQL suites still pass after the additive API
-  transport unlock.
+- registration, sign-in, session restore, sign-out,
+- authenticated Home and session guards,
+- Expo Router route groups as required for the approved shell navigation,
+- Android and iOS interactive smoke against a running API.
 
-Out of scope for 2.9B.1:
+Sprint 2.9B.1 foundation scope (completed; details in §15.2) included Expo
+workspace conversion, Metro monorepo config, `@better-auth/expo@1.6.23`
+client/server transport unlock, `lumora://` / development-only `exp://`
+trusted origins, validated mobile API base URL, and automated verification.
+Expo Router navigation and device smoke were deferred to 2.9B.2 because they
+are not required to prove the transport foundation.
 
-- full registration/sign-in UX completion beyond skeleton routes if needed for
-  compile/smoke,
-- disclosure presentation copy wiring,
-- Family/Pregnancy/Child/Timeline UI,
-- email-verification UI,
-- analytics, push, localization, store release.
+## 15.2 Sprint 2.9B.1 Implementation Record
 
-Sprint 2.9B.1 is architecturally unblocked by this decision.
+Sprint 2.9B.1 implements:
+
+- Expo SDK `~57.0.8` / React Native `0.86.0` / React `19.2.3` workspace app in
+  `apps/mobile`,
+- TypeScript `~5.9.3` for the mobile package (Expo’s optional `~6.0.3`
+  recommendation is intentionally not adopted to avoid a mobile-only TypeScript
+  6 jump while the monorepo root remains on a separate TypeScript line),
+- Metro monorepo configuration and Expo config with scheme `lumora`,
+- temporary technical bootstrap root (not the authenticated shell),
+- validated `EXPO_PUBLIC_LUMORA_API_BASE_URL`,
+- Better Auth Expo client transport composition with SecureStore-compatible
+  sync storage and Lumora storage prefix,
+- `@better-auth/expo@1.6.23` server plugin in `@lumora/auth`,
+- trusted-origin support for `lumora://` / `lumora://*` and development-only
+  `exp://` / `exp://**`,
+- and automated foundation/config/origin/auth-composition tests.
+
+Verification completed in-repo:
+
+- `pnpm` install/lockfile, lint, typecheck, test, build
+- mobile foundation script (`expo config`, Metro load, no `android/`/`ios/`)
+- `@lumora/auth` trusted-origin + Expo plugin tests
+- API unit + integration auth suites
+- disposable PostgreSQL Authentication, Family (incl. invitation entry),
+  Pregnancy, Child, and Timeline suites
+- Prisma validate/generate (no schema/migration changes)
+
+Verification gap intentionally deferred:
+
+- Android emulator and iOS simulator interactive smoke starts were not executed
+  in this environment (`expo install --check` reports only the intentional
+  TypeScript pin difference above).
+
+Sprint 2.9B.2 (authenticated session shell UI) is unblocked for implementation
+against this foundation.
 
 ---
 

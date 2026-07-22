@@ -93,6 +93,80 @@ test("parseTrustedOrigins rejects empty values", () => {
   assert.throws(() => parseTrustedOrigins(", ,"), /at least one origin/);
 });
 
+test("parseTrustedOrigins accepts HTTPS, local HTTP, and approved mobile scheme", () => {
+  assert.deepEqual(
+    parseTrustedOrigins(
+      "https://lumora.example,http://localhost:3000,lumora://,lumora://*",
+    ),
+    [
+      "https://lumora.example",
+      "http://localhost:3000",
+      "lumora://",
+      "lumora://*",
+    ],
+  );
+});
+
+test("parseTrustedOrigins accepts Expo development origins only when allowed", () => {
+  assert.deepEqual(
+    parseTrustedOrigins("http://localhost:3000,exp://,exp://**", {
+      allowExpoDevelopmentOrigins: true,
+    }),
+    ["http://localhost:3000", "exp://", "exp://**"],
+  );
+  assert.throws(
+    () =>
+      parseTrustedOrigins("http://localhost:3000,exp://", {
+        allowExpoDevelopmentOrigins: false,
+      }),
+    /Expo development origins are not allowed in production/,
+  );
+});
+
+test("parseTrustedOrigins rejects wildcards, arbitrary schemes, and URL extras", () => {
+  assert.throws(() => parseTrustedOrigins("*"), /wildcard/);
+  assert.throws(() => parseTrustedOrigins("evil://x"), /unapproved scheme/);
+  assert.throws(
+    () => parseTrustedOrigins("lumora://not-approved"),
+    /exactly lumora:\/\//,
+  );
+  assert.throws(
+    () =>
+      parseTrustedOrigins("exp://192.168.1.1:8081", {
+        allowExpoDevelopmentOrigins: true,
+      }),
+    /not approved/,
+  );
+  assert.throws(
+    () => parseTrustedOrigins("https://user:pass@lumora.example"),
+    /credentials, query, or fragment/,
+  );
+  assert.throws(
+    () => parseTrustedOrigins("https://lumora.example?x=1"),
+    /credentials, query, or fragment/,
+  );
+  assert.throws(
+    () => parseTrustedOrigins("https://lumora.example#hash"),
+    /credentials, query, or fragment/,
+  );
+});
+
+test("production validation rejects Expo development trusted origins", () => {
+  assert.throws(
+    () =>
+      validate({
+        ...validEnv,
+        NODE_ENV: "production",
+        BETTER_AUTH_URL: "https://auth.lumora.example",
+        AUTH_TRUSTED_ORIGINS: "https://lumora.example,exp://",
+        AUTH_EMAIL_VERIFICATION_CONFIRMATION_PAGE_URL:
+          "https://lumora.example/verify-email",
+        AUTH_EMAIL_VERIFICATION_DELIVERY_MODE: "production",
+      }),
+    /Expo development origins are not allowed in production/,
+  );
+});
+
 test("capture mode must be explicitly selected and injected", () => {
   assert.throws(
     () =>

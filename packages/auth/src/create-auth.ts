@@ -1,3 +1,4 @@
+import { expo } from "@better-auth/expo";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { getPrismaClient } from "@lumora/database";
@@ -51,7 +52,7 @@ export function buildAuthOptions(config: AuthRuntimeConfig) {
         }
       },
     },
-    plugins: [sessionResponseRedaction],
+    plugins: [sessionResponseRedaction, expo()],
     telemetry: {
       enabled: false,
     },

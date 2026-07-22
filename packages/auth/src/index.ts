@@ -3,6 +3,7 @@ export {
   validateAuthRuntimeConfig,
   type AuthEmailVerificationDeliveryConfig,
   type AuthRuntimeConfig,
+  type ParseTrustedOriginsOptions,
 } from "./auth-config.js";
 export {
   assertCanonicalUserEmailRows,
